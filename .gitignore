@@ -1,0 +1,4 @@
+*.csv
+*.smp
+.DS_Store
+apikey
