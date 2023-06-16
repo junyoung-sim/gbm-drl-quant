@@ -43,6 +43,6 @@ double geometric_brownian_motion(std::vector<double> &dat, unsigned int N, unsig
 
     out.close();
 
-    // probability that asset value will be greater than s0 during N-day period after s0
+    // probability that asset value will be greater than s0 during N-day period after s0 (valuation score)
     return (double)score / (epoch * N);
 }
