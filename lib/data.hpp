@@ -5,7 +5,7 @@
 #include <string>
 
 void download(std::string &ticker);
-/*
+
 std::vector<std::vector<double>> read_csv(std::string path);
 
 std::vector<std::vector<double>> historical_data(std::string ticker, std::vector<std::string> &indicators);
@@ -13,8 +13,9 @@ std::vector<std::vector<double>> historical_data(std::string ticker, std::vector
 double mean(std::vector<double> &dat);
 double stdev(std::vector<double> &dat);
 
+/*
 void piecewise_aggregate_approximation(std::vector<double> &dat, unsigned int window);
 
-void standardize(std::vector<double> &dat);*/
-
+void standardize(std::vector<double> &dat);
+*/
 #endif

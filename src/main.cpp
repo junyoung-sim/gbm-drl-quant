@@ -1,16 +1,27 @@
 #include <iostream>
 #include <cstdlib>
 #include <string>
+#include <vector>
+#include <random>
 
-#include "../lib/data.hpp"
+#include "../lib/gbm.hpp"
+
+/*
+    ./exec MODE TICKER CHECKPOINT (TRAIN) (TEST)
+*/
 
 std::string mode, ticker, checkpoint; // basic command line arguments
 
+double train, test; // data partition for build
+
 std::vector<std::string> indicators = {"SPY", "IEF"}; // stock, bond
 
-double train, test; // data partition
+std::vector<std::vector<double>> env; // ticker environment (dataset)
 
-void boot(int argc, char *argv[]) { // ./exec MODE TICKER CHECKPOINT (TRAIN) (TEST)
+std::default_random_engine seed; // random seed
+
+void boot(int argc, char *argv[]) {
+    // read command line arguments
     mode       = argv[1];
     ticker     = argv[2];
     checkpoint = argv[3];
@@ -25,13 +36,16 @@ void boot(int argc, char *argv[]) { // ./exec MODE TICKER CHECKPOINT (TRAIN) (TE
     download(ticker);
     for(std::string &ind: indicators)
         download(ind);
-    
-    
+
+    env = historical_data(ticker, indicators); // create ticker environment (dataset)
+    std::cout << "\n";
 }
 
 int main(int argc, char *argv[])
 {
     boot(argc, argv);
+
+    std::cout << geometric_brownian_motion(env[1], 60, 100, seed, false);
 
     return 0;
 }

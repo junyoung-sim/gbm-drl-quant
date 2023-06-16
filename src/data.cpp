@@ -7,7 +7,7 @@
 void download(std::string &ticker) {
     std::system(("./python/download.py " + ticker).c_str());
 }
-/*
+
 std::vector<std::vector<double>> read_csv(std::string path) {
     std::vector<std::vector<double>> dat;
     std::ifstream file(path);
@@ -37,7 +37,8 @@ std::vector<std::vector<double>> read_csv(std::string path) {
 }
 
 std::vector<std::vector<double>> historical_data(std::string ticker, std::vector<std::string> &indicators) {
-    // clean historical data using pandas: columns={ticker, indicators}
+    // clean historical data using pandas
+    // columns={ticker, indicator_1, indicator_2, ... , indicator_n}
     std::string clean = "./python/clean.py " + ticker + " ";
     for(unsigned int i = 0; i < indicators.size(); i++) {
         clean += indicators[i];
@@ -46,9 +47,10 @@ std::vector<std::vector<double>> historical_data(std::string ticker, std::vector
     }
     std::system(clean.c_str());
 
-    // each row of 2d vec has the historical data of the ticker and the indicators
+    // each row has the historical data of the ticker and each indicator
     return read_csv("./data/cleaned.csv");
 }
+
 
 double mean(std::vector<double> &dat) {
     double sum = 0.00;
@@ -62,11 +64,11 @@ double stdev(std::vector<double> &dat) {
     double m = mean(dat);
     for(double &x: dat)
         s += pow(x - m, 2);
-    s /= dat.size();
+    s /= dat.size() - 1;
     s = sqrt(s);
     return s;
 }
-
+/*
 void piecewise_aggregate_approximation(std::vector<double> &dat, unsigned int window) {
     // discretizing time series by averaging equally split windows
     for(unsigned int t = 0; t <= dat.size() - window; t += window) {
