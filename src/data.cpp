@@ -37,7 +37,6 @@ std::vector<std::vector<double>> read_csv(std::string path) {
 }
 
 std::vector<std::vector<double>> historical_data(std::string ticker, std::vector<std::string> &indicators) {
-    // clean historical data using pandas
     // columns={ticker, indicator_1, indicator_2, ... , indicator_n}
     std::string clean = "./python/clean.py " + ticker + " ";
     for(unsigned int i = 0; i < indicators.size(); i++) {
@@ -50,7 +49,6 @@ std::vector<std::vector<double>> historical_data(std::string ticker, std::vector
     // each row has the historical data of the ticker and each indicator
     return read_csv("./data/cleaned.csv");
 }
-
 
 double mean(std::vector<double> &dat) {
     double sum = 0.00;

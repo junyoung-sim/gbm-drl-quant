@@ -2,42 +2,47 @@
 #include <vector>
 #include <cmath>
 #include <fstream>
+#include <random>
+#include <chrono>
 
 #include "../lib/gbm.hpp"
 
 double geometric_brownian_motion(std::vector<double> &dat, unsigned int N, unsigned int epoch, std::default_random_engine &seed, bool plot) {
-    std::vector<double> ret;
+    std::vector<double> returns; // daily returns
     for(int t = 1; t < dat.size(); t++)
-        ret.push_back((dat[t] - dat[t-1]) / dat[t-1]);
+        returns.push_back((dat[t] - dat[t-1]) / dat[t-1]);
     
     double s0 = dat.back();
-    double mu = mean(ret);
-    double sigma = stdev(ret);
-    double drift = mu + 0.5 * pow(sigma, 2);
+    double mu = mean(returns); // mean return
+    double sigma = stdev(returns); // variability in returns (volatility or risk)
+    double drift = mu + 0.5 * pow(sigma, 2); // drift of random walk
+
+    std::ofstream out("./res/simulation"); // save simulated paths
 
     std::normal_distribution<double> std_normal(0.0, 1.0);
 
-    unsigned int up = 0;
+    unsigned int score = 0;
 
     for(int e = 0; e < epoch; e++) {
-        std::vector<double> brownian(N+1, 0);
+        std::vector<double> brownian(N+1, 0); // brownian motion shocks
         for(int t = 1; t <= N; t++)
             brownian[t] = brownian[t-1] + std_normal(seed);
         
-        std::vector<double> path(N+1); path[0] = s0;
+        std::vector<double> path(N+1); path[0] = s0; // simulate path
         for(int t = 1; t <= N; t++) {
             path[t] = s0 * exp(drift * t + sigma * brownian[t]);
-            up += path[t] > s0;
+            score += path[t] > s0;
         }
 
         if(plot) {
-            std::ofstream gbm("./res/gbm", std::ios_base::app);
             for(double &x: path)
-                gbm << x << " ";
-            gbm << "\n";
-            gbm.close();            
+                out << x << " ";
+            out << "\n";
         }
     }
 
-    return (double)up / (epoch * N);
+    out.close();
+
+    // probability that asset value will be greater than s0 during N-day period after s0
+    return (double)score / (epoch * N);
 }

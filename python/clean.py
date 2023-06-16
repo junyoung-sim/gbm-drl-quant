@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 
 import sys
+import numpy as np
 import pandas as pd
+import seaborn as sns
+import scipy as sp
+import matplotlib.pyplot as plt
 
 df = None
+
 for i in range(1, len(sys.argv)):
     ticker = sys.argv[i]
     dat = pd.read_csv("./data/{}.csv" .format(ticker))[["date", "adjClose"]]
