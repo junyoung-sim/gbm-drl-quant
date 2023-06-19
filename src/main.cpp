@@ -5,7 +5,6 @@
 #include <random>
 #include <chrono>
 #include <map>
-#include <fstream>
 
 #include "../lib/quant.hpp"
 
@@ -45,7 +44,7 @@ std::string checkpoint;
 
 double train, test;
 
-std::map<std::string, std::vector<std::vector<double>>> env; // (ticker, dataframe)
+Environment env; // (ticker, dataframe)
 
 void boot(int argc, char *argv[]) {
     mode = argv[1];
@@ -73,6 +72,8 @@ int main(int argc, char *argv[])
     boot(argc, argv);
 
     Quant quant(checkpoint);
+
+    quant.build(tickers, env, train, test);
 
     return 0;
 }

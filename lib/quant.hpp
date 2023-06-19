@@ -6,9 +6,26 @@
 #include <string>
 #include <random>
 #include <chrono>
+#include <map>
 
 #include "../lib/gbm.hpp"
 #include "../lib/net.hpp"
+
+#define TICKER 0
+
+typedef std::map<std::string, std::vector<std::vector<double>>> Environment;
+
+struct Memory {
+    std::vector<double> state;
+    unsigned int action;
+    double optimal;
+
+    Memory(std::vector<double> &s, unsigned int a, double opt) {
+        state.swap(s);
+        action = a;
+        optimal = opt;
+    }
+};
 
 class Quant
 {
@@ -45,6 +62,8 @@ public:
 
     unsigned int greedy(std::vector<double> &state);
     unsigned int epsilon_greedy(std::vector<double> &state, double eps);
+
+    void build(std::vector<std::string> &tickers, Environment &env, double train, double test);
 
     void save();
     void load();

@@ -7,7 +7,7 @@
 
 #include "../lib/gbm.hpp"
 
-double geometric_brownian_motion(std::vector<double> &dat, unsigned int N, unsigned int epoch, std::default_random_engine &seed, bool plot) {
+std::vector<double> geometric_brownian_motion(std::vector<double> &dat, unsigned int N, unsigned int epoch, std::default_random_engine &seed, bool plot) {
     std::vector<double> returns; // daily returns
     for(int t = 1; t < dat.size(); t++)
         returns.push_back((dat[t] - dat[t-1]) / dat[t-1]);
@@ -43,6 +43,6 @@ double geometric_brownian_motion(std::vector<double> &dat, unsigned int N, unsig
 
     out.close();
 
-    // probability that asset value will be greater than s0 during N-day period after s0 (valuation score)
-    return (double)score / (epoch * N);
+    // P(s_t > s0 | t E {1, 2, ..., N}) (valuation score) and mu (mean return)
+    return std::vector<double>{(double)score / (epoch * N), mu};
 }
