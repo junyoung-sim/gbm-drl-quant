@@ -68,7 +68,7 @@ unsigned int Quant::epsilon_greedy(std::vector<double> &state, double eps) {
 void Quant::build(std::vector<std::string> &tickers, Environment &env, double train, double test) {
     unsigned int env_size = 0;
     for(std::string &ticker: tickers)
-        env_size += env[ticker][TICKER].size();
+        env_size += env[ticker][TICKER].size() * train - obs;
     
     // learning hyperparameters
 
@@ -100,6 +100,8 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
         unsigned int terminal = env[ticker][TICKER].size() * train;
 
         std::ofstream out("./res/log");
+        out << "state,action,benchmark,model\n";
+
         double benchmark = 1.00, model = 1.00;
 
         for(unsigned int t = start; t <= terminal; t++) {
@@ -108,7 +110,38 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
                 eps = (eps_min - eps_init) / capacity * experiences + eps_init;
             
             std::vector<double> state = sample_state(env[ticker], t); // sample current state
+            unsigned int action = epsilon_greedy(state, eps); // select action
+            double q = agent.back()->node(action)->sum(); // predicted q-value of selected action
+
+            // observe discrete reward from daily p&l
+            double diff = (env[ticker][TICKER][t+1] - env[ticker][TICKER][t]) / env[ticker][TICKER][t];
+            double observed_reward = (diff >= 0 ? action_space[action] : -action_space[action ]); // +1 for profit and -1 for loss
+
+            // estimate discounted long-term reward
+            std::vector<double> next_state = sample_state(env[ticker], t);
+            std::vector<double> tq = target.predict(next_state);
+
+            // estiamte optimal q-value of selected action
+            double optimal = observed_reward + gamma * *std::max_element(tq.begin(), tq.end());
+
+            // track historical return-on-investment
+            benchmark *= 1.00 + diff;
+            model *= 1.00 + diff * action_space[action];
+
+            // track model cost
+            rss += pow(optimal - q, 2);
+            mse = rss / ++experiences;
+
+            // output MDP log
+            out << state[TICKER] << "," << action << "," << benchmark << "," << model << "\n";
+            std::cout << std::fixed;
+            std::cout.precision(15);
+            std::cout << "(LOSS=" << mse << " EPS=" << eps << " ALPHA=" << alpha << ") ";
+            std::cout << "T=" << t << " @ " << ticker << " ACTION=" << action << " ";
+            std::cout << "-> OBS=" << observed_reward << " OPT=" << optimal << " ";
+            std::cout << "BENCH=" << benchmark << " " << "MODEL=" << model << "\n";
         }
+
         out.close();
     }
 }

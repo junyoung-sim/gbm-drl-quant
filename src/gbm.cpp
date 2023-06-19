@@ -43,6 +43,6 @@ std::vector<double> geometric_brownian_motion(std::vector<double> &dat, unsigned
 
     out.close();
 
-    // P(s_t > s0 | t E {1, 2, ..., N}) (valuation score) and mu (mean return)
+    // P(s_t > s0 | t E {1, 2, ... , N}) (valuation score) and mu (mean return)
     return std::vector<double>{(double)score / (epoch * N), mu};
 }
