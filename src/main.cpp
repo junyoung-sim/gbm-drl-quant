@@ -10,9 +10,9 @@
 
 /*
 <STATE>                              <ACTION>
-    X: Ticker-of-interest                0: Long
+    X: Ticker-of-interest                0: Short
     SPY: S&P 500                         1: Idle
-    DIA: Dow 30                          2: Short
+    DIA: Dow 30                          2: Long
     QQQ: NASDAQ 100
     VEA: Non-US Developed 50         <REWARD>
     FEZ: Euro 50                         Discrete (+/-1)
@@ -42,17 +42,15 @@ std::vector<std::string> indicators = {"SPY", "DIA", "QQQ", "VEA", "FEZ",
 std::string mode;
 std::string checkpoint;
 
-double train, test;
+double train;
 
 Environment env; // (ticker, dataframe)
 
 void boot(int argc, char *argv[]) {
     mode = argv[1];
-    if(mode == "build") {
+    if(mode == "build")
         train = std::stod(argv[2]);
-        test = std::stod(argv[3]);
-    }
-    for(int i = 4; i < argc - 1; i++)
+    for(int i = 3; i < argc - 1; i++)
         tickers.push_back(argv[i]);
     checkpoint = argv[argc-1];
 
@@ -65,6 +63,8 @@ void boot(int argc, char *argv[]) {
     }
 
     std::cout << "\n";
+    std::cout << std::fixed;
+    std::cout.precision(15);
 }
 
 int main(int argc, char *argv[])
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 
     Quant quant(checkpoint);
 
-    quant.build(tickers, env, train, test);
+    quant.build(tickers, env, train);
 
     return 0;
 }

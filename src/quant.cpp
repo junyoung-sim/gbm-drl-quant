@@ -41,8 +41,8 @@ std::vector<double> Quant::sample_state(std::vector<std::vector<double>> &env, u
     std::vector<double> state;
     for(unsigned int i = 0; i < env.size(); i++) {
         std::vector<double> dat = {env[i].begin() + t + 1 - obs, env[i].begin() + t + 1}; // observation window
-        std::vector<double> out = geometric_brownian_motion(dat, ext, epoch, seed, false); // {valuation score, mean return}
-        state.insert(state.end(), out.begin(), out.end());
+        double score = geometric_brownian_motion(dat, ext, epoch, seed, false); // valuation score
+        state.push_back(score);
     }
     return state;
 }
@@ -65,7 +65,7 @@ unsigned int Quant::epsilon_greedy(std::vector<double> &state, double eps) {
 }
 
 
-void Quant::build(std::vector<std::string> &tickers, Environment &env, double train, double test) {
+void Quant::build(std::vector<std::string> &tickers, Environment &env, double train) {
     unsigned int env_size = 0;
     for(std::string &ticker: tickers)
         env_size += env[ticker][TICKER].size() * train - obs;
@@ -91,10 +91,8 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
     unsigned int experiences = 0; // total number of states observed during training
     double rss = 0.00, mse = 0.00; // residual squared sum, mean squared error
 
-    // train deep q-network
-
+    // train
     std::shuffle(tickers.begin(), tickers.end(), seed); // randomize order of training
-
     for(std::string &ticker: tickers) {
         unsigned int start = obs - 1;
         unsigned int terminal = env[ticker][TICKER].size() * train;
@@ -115,7 +113,7 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
 
             // observe discrete reward from daily p&l
             double diff = (env[ticker][TICKER][t+1] - env[ticker][TICKER][t]) / env[ticker][TICKER][t];
-            double observed_reward = (diff >= 0 ? action_space[action] : -action_space[action ]); // +1 for profit and -1 for loss
+            double observed_reward = (diff >= 0 ? action_space[action] : -action_space[action]); // +1 for profit and -1 for loss
 
             // estimate discounted long-term reward
             std::vector<double> next_state = sample_state(env[ticker], t);
@@ -134,18 +132,101 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
 
             // output MDP log
             out << state[TICKER] << "," << action << "," << benchmark << "," << model << "\n";
-            std::cout << std::fixed;
-            std::cout.precision(15);
             std::cout << "(LOSS=" << mse << " EPS=" << eps << " ALPHA=" << alpha << ") ";
             std::cout << "T=" << t << " @ " << ticker << " ACTION=" << action << " ";
             std::cout << "-> OBS=" << observed_reward << " OPT=" << optimal << " ";
             std::cout << "BENCH=" << benchmark << " " << "MODEL=" << model << "\n";
+
+            // save experience
+            Memory memory(state, action, optimal);
+            replay_memory.push_back(memory);
+
+            if(replay_memory.size() == capacity) {
+                std::vector<unsigned int> index(capacity, 0);
+                std::iota(index.begin(), index.end(), 0);
+                std::shuffle(index.begin(), index.end(), seed);
+                index.erase(index.begin() + batch_size, index.end()); // randomly select 10 experiences
+
+                // expotentially decaying learning rate
+                alpha = alpha_init * exp(alpha_decay * (experiences - capacity) / (env_size - capacity));
+
+                for(unsigned int k: index)
+                    sgd(replay_memory[k], alpha, lambda); // update agent network
+                
+                replay_memory.erase(replay_memory.begin()); // remove oldest experience
+            }
+        } sync(); // synchronize target network to agent network
+
+        out.close();
+        std::system(("./python/log.py " + ticker + "-train").c_str()); // plot
+    }
+    save();
+
+    // test (out-of-sample)
+    for(std::string &ticker: tickers) {
+        unsigned int start = env[ticker][TICKER].size() * train + 1;
+        unsigned int terminal = env[ticker][TICKER].size() - 2;
+
+        std::ofstream out("./res/log");
+        out << "state,action,benchmark,model\n";
+
+        double benchmark = 1.00, model = 1.00;
+
+        for(unsigned int t = start; t <= terminal; t++) {
+            std::vector<double> state = sample_state(env[ticker], t); // sample state
+            unsigned int action = greedy(state); // select action
+
+            // observe daily p&l
+            double diff = (env[ticker][TICKER][t+1] - env[ticker][TICKER][t]) / env[ticker][TICKER][t];
+            benchmark *= 1.00 + diff;
+            model *= 1.00 + diff * action_space[action];
+
+            // output MDP log
+            out << state[TICKER] << "," << action << "," << benchmark << "," << model << "\n";
+            std::cout << "T=" << t << " @ " << ticker << " ACTION=" << action << " ";
+            std::cout << "BENCH=" << benchmark << " MODEL=" << model << "\n";
         }
 
         out.close();
+        std::system(("./python/log.py " + ticker + "-test").c_str()); // plot
+        std::system(("./python/stats.py push " + ticker).c_str()); // analyze
     }
+
+    std::system("./python/stats.py summary"); // output test performance
 }
 
+void Quant::sgd(Memory &memory, double alpha, double lambda) { // stochastic gradient descent (mse)
+    std::vector<double> q = agent.predict(memory.state);
+    for(int l = agent.num_of_layers() - 1; l >= 0; l--) {
+        double partial_gradient = 0.00, gradient = 0.00;
+        for(unsigned int n = 0; n < agent.layer(l)->out_features(); n++) {
+            if(l == agent.num_of_layers() - 1 && n != memory.action) continue; // ignore non-selected actions
+            else {
+                if(l == agent.num_of_layers() - 1)
+                    partial_gradient = -2.00 * (memory.optimal - q[n]);
+                else
+                    partial_gradient = agent.layer(l)->node(n)->err() * relu_prime(agent.layer(l)->node(n)->sum());
+
+                double updated_bias = agent.layer(l)->node(n)->bias() - alpha * partial_gradient;
+                agent.layer(l)->node(n)->set_bias(updated_bias);
+
+                for(unsigned int i = 0; i < agent.layer(l)->in_features(); i++) {
+                    if(l == 0)
+                        gradient = partial_gradient * memory.state[i];
+                    else {
+                        gradient = partial_gradient * agent.layer(l-1)->node(i)->act();
+                        agent.layer(l-1)->node(i)->add_err(partial_gradient * agent.layer(l)->node(n)->weight(i));
+                    }
+
+                    gradient += lambda * agent.layer(l)->node(n)->weight(i);
+
+                    double updated_weight = agent.layer(l)->node(n)->weight(i) - alpha * gradient;
+                    agent.layer(l)->node(n)->set_weight(i, updated_weight);
+                }
+            }
+        }
+    }
+}
 
 void Quant::save() {
     std::ofstream out(checkpoint);

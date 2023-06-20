@@ -51,7 +51,7 @@ public:
 
         action_space = {-1.0, 0.0, 1.0}; // short, idle, long
 
-        init({{40,35},{35,30},{30,25},{25,20},{20,15},{15,3}});
+        init({{20,20},{20,18},{18,16},{16,14},{14,12},{12,3}});
         load();
     }
 
@@ -63,7 +63,8 @@ public:
     unsigned int greedy(std::vector<double> &state);
     unsigned int epsilon_greedy(std::vector<double> &state, double eps);
 
-    void build(std::vector<std::string> &tickers, Environment &env, double train, double test);
+    void build(std::vector<std::string> &tickers, Environment &env, double train);
+    void sgd(Memory &memory, double alpha, double lambda);
 
     void save();
     void load();
