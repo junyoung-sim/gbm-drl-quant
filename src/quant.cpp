@@ -117,7 +117,6 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
                 eps = (eps_min - eps_init) / capacity * experiences + eps_init;
             
             std::vector<double> state = sample_state(env[ticker], t); // sample current state
-            std::cout << state.size() << "\n";
             unsigned int action = epsilon_greedy(state, eps); // select action
             double q = agent.back()->node(action)->sum(); // predicted q-value of selected action
 
