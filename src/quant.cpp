@@ -39,11 +39,21 @@ void Quant::sync() {
 
 std::vector<double> Quant::sample_state(std::vector<std::vector<double>> &env, unsigned int t) {
     std::vector<double> state;
+    std::vector<double> valuation;
     for(unsigned int i = 0; i < env.size(); i++) {
-        std::vector<double> dat = {env[i].begin() + t + 1 - obs, env[i].begin() + t + 1}; // observation window
-        double score = geometric_brownian_motion(dat, ext, epoch, seed, false); // valuation score
-        state.push_back(score);
+        std::vector<double> dat = {env[i].begin() + t + 1 - obs, env[i].begin() + t + 1}; // raw price series of each security
+
+        double score = geometric_brownian_motion(dat, ext, epoch, seed); // valuation score
+        valuation.push_back(score);
+
+        // discretize and standardize raw price series of each security
+        piecewise_aggregate_approximation(dat, paa_window);
+        standardize(dat);
+        state.insert(state.end(), dat.begin(), dat.end());
     }
+
+    state.insert(state.begin(), valuation.begin(), valuation.end());
+
     return state;
 }
 
@@ -63,7 +73,6 @@ unsigned int Quant::epsilon_greedy(std::vector<double> &state, double eps) {
         std::cout << "(P) ";
     return action;
 }
-
 
 void Quant::build(std::vector<std::string> &tickers, Environment &env, double train) {
     unsigned int env_size = 0;
@@ -108,6 +117,7 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
                 eps = (eps_min - eps_init) / capacity * experiences + eps_init;
             
             std::vector<double> state = sample_state(env[ticker], t); // sample current state
+            std::cout << state.size() << "\n";
             unsigned int action = epsilon_greedy(state, eps); // select action
             double q = agent.back()->node(action)->sum(); // predicted q-value of selected action
 

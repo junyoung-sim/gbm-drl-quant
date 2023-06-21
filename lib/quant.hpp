@@ -2,6 +2,7 @@
 #define __QUANT_HPP_
 
 #include <cstdlib>
+#include <iostream>
 #include <vector>
 #include <string>
 #include <random>
@@ -12,8 +13,6 @@
 #include "../lib/net.hpp"
 
 #define TICKER 0
-
-typedef std::map<std::string, std::vector<std::vector<double>>> Environment;
 
 struct Memory {
     std::vector<double> state;
@@ -27,17 +26,21 @@ struct Memory {
     }
 };
 
+typedef std::map<std::string, std::vector<std::vector<double>>> Environment;
+
 class Quant
 {
 private:
-    NeuralNetwork agent; // Deep Q-Network (DQN)
+    // Deep Q-Network (DQN)
+    NeuralNetwork agent;
     NeuralNetwork target;
 
-    unsigned int obs; // GBM simulation observation period (days)
-    unsigned int ext; // GBM sample path extrapolation period (days)
-    unsigned int epoch; // GBM simulation epoch
+    const std::vector<double> action_space = {-1.0, 0.0, 1.0}; // short, idle, long
 
-    std::vector<double> action_space;
+    const unsigned int paa_window = 5; // discretization window (5 days)
+    const unsigned int obs = 100; // GBM simulation observation period (100 days)
+    const unsigned int ext = 50; // GBM sample path extrapolation period (50 days)
+    const unsigned int epoch = 100; // GBM simulation epoch
 
     std::string checkpoint;
     std::default_random_engine seed;
@@ -45,20 +48,14 @@ private:
 public:
     Quant() {}
     Quant(std::string path): checkpoint(path) {
-        obs = 120;
-        ext = 60;
-        epoch = 100;
-
-        action_space = {-1.0, 0.0, 1.0}; // short, idle, long
-
-        init({{20,20},{20,20},{20,20},{20,20},{20,20},{20,20},{20,20},{20,20},{20,3}});
+        init({{606,606},{606,606},{606,606},{606,3}});
         load();
     }
 
     void init(std::vector<std::vector<unsigned int>> shape);
     void sync();
 
-    std::vector<double> sample_state(std::vector<std::vector<double>> &dat, unsigned int t);
+    std::vector<double> sample_state(std::vector<std::vector<double>> &env, unsigned int t);
 
     unsigned int greedy(std::vector<double> &state);
     unsigned int epsilon_greedy(std::vector<double> &state, double eps);

@@ -6,6 +6,6 @@
 
 #include "../lib/data.hpp"
 
-double geometric_brownian_motion(std::vector<double> &dat, unsigned int N, unsigned int epoch, std::default_random_engine &seed, bool plot);
+double geometric_brownian_motion(std::vector<double> &dat, unsigned int N, unsigned int epoch, std::default_random_engine &seed);
 
 #endif

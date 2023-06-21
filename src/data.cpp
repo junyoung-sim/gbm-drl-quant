@@ -66,3 +66,20 @@ double stdev(std::vector<double> &dat) {
     s = sqrt(s);
     return s;
 }
+
+void piecewise_aggregate_approximation(std::vector<double> &dat, unsigned int window) {
+    // discretizing time series by averaging equally split windows
+    for(unsigned int t = 0; t <= dat.size() - window; t += window) {
+        std::vector<double> piece = {dat.begin() + t, dat.begin() + t + window};
+        double approx = mean(piece);
+        for(unsigned int i = t; i < t + window; i++)
+            dat[i] = approx;
+    }
+}
+
+void standardize(std::vector<double> &dat) {
+    double m = mean(dat);
+    double s = stdev(dat);
+    for(double &x: dat)
+        x = (x - m) / s;
+}

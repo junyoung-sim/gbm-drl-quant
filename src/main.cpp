@@ -2,49 +2,30 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
-#include <random>
-#include <chrono>
-#include <map>
 
 #include "../lib/quant.hpp"
 
 /*
-<STATE>                              <ACTION>
-    X: Ticker-of-interest                0: Short
-    SPY: S&P 500                         1: Idle
-    DIA: Dow 30                          2: Long
-    QQQ: NASDAQ 100
-    VEA: Non-US Developed 50         <REWARD>
-    FEZ: Euro 50                         Discrete (+/-1)
-    AIA: Asia 50
-    SPEM: Emerging Markets           <SPECS>
-    SHY: US Treasury 1-3Y                X E S&P 500 (TOP 100)
-    IEF: US Treasury 7-10Y               
-    TLT: US Treasury 15-20Y
-    VNQ: Real Estate
-    XLY: Consumer Discretionary
-    XLP: Consumer Staples                
-    XLE: Energy
-    XLF: Financial
-    XLV: Health Care
-    XLI: Industrial
-    XLB: Materials
-    XLU: Utilities
+<STATE>                              
+    X: Ticker-of-interest
+    SPY: S&P 500
+    SHY: US Treasury 1-3Y
+    IEF: US Treasury 7-10Y
+    GSG: Commodities
+    EUR=X: Europe/USD
 
-    ./exec MODE (TRAIN) (TEST) <TICKERS> CHECKPOINT (./models/*)
+    ./exec MODE (TRAIN) (TEST) <TICKERS> ./models/CHECKPOINT
 */
 
 std::vector<std::string> tickers;
-std::vector<std::string> indicators = {"SPY", "DIA", "QQQ", "VEA", "FEZ",
-                                       "AIA", "SPEM", "SHY", "IEF", "TLT",
-                                       "VNQ", "XLY", "XLP", "XLE", "XLF",
-                                       "XLV", "XLI", "XLB", "XLU"};
+std::vector<std::string> indicators = {"SPY", "SHY", "IEF", "GSG", "EUR=X"};
+
 std::string mode;
 std::string checkpoint;
 
-double train;
+Environment env; // (ticker, dataset)
 
-Environment env; // (ticker, dataframe)
+double train = 0.90;
 
 void boot(int argc, char *argv[]) {
     mode = argv[1];
@@ -55,10 +36,10 @@ void boot(int argc, char *argv[]) {
     checkpoint = argv[argc-1];
 
     std::cout << "\nDownloading... (this may take a while)\n\n";
-    for(std::string &ind: indicators)
-        download(ind);
+    //for(std::string &ind: indicators)
+    //    download(ind);
     for(std::string &ticker: tickers) {
-        download(ticker);
+        //download(ticker);
         env[ticker] = historical_data(ticker, indicators);
     }
 
