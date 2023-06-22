@@ -48,7 +48,7 @@ private:
 public:
     Quant() {}
     Quant(std::string path): checkpoint(path) {
-        init({{606,606},{606,606},{606,606},{606,3}});
+        init({{505,505},{505,505},{505,505},{505,3}});
         load();
     }
 

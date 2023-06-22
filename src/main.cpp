@@ -9,7 +9,6 @@
 <STATE>                              
     X: Ticker-of-interest
     SPY: S&P 500
-    SHY: US Treasury 1-3Y
     IEF: US Treasury 7-10Y
     GSG: Commodities
     EUR=X: Europe/USD
@@ -18,7 +17,7 @@
 */
 
 std::vector<std::string> tickers;
-std::vector<std::string> indicators = {"SPY", "SHY", "IEF", "GSG", "EUR=X"};
+std::vector<std::string> indicators = {"SPY", "IEF", "GSG", "EUR=X"};
 
 std::string mode;
 std::string checkpoint;
@@ -36,10 +35,10 @@ void boot(int argc, char *argv[]) {
     checkpoint = argv[argc-1];
 
     std::cout << "\nDownloading... (this may take a while)\n\n";
-    //for(std::string &ind: indicators)
-    //    download(ind);
+    for(std::string &ind: indicators)
+        download(ind);
     for(std::string &ticker: tickers) {
-        //download(ticker);
+        download(ticker);
         env[ticker] = historical_data(ticker, indicators);
     }
 
