@@ -125,7 +125,7 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
             double observed_reward = (diff >= 0 ? action_space[action] : -action_space[action]); // +1 for profit and -1 for loss
 
             // estimate discounted long-term reward
-            std::vector<double> next_state = sample_state(env[ticker], t);
+            std::vector<double> next_state = sample_state(env[ticker], t+1);
             std::vector<double> tq = target.predict(next_state);
 
             // estiamte optimal q-value of selected action
