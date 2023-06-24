@@ -38,7 +38,7 @@ private:
     const std::vector<double> action_space = {-1.0, 0.0, 1.0}; // short, idle, long
 
     const unsigned int paa_window = 5; // discretization window (5 days)
-    const unsigned int obs = 100; // GBM simulation observation period (100 days)
+    const unsigned int obs = 100; // observation period (100 days)
     const unsigned int ext = 50; // GBM sample path extrapolation period (50 days)
     const unsigned int epoch = 100; // GBM simulation epoch
 
