@@ -34,15 +34,11 @@ This trading model combines the aforementioned GBM simulation with Generalized D
 
 The trading model was trained on the S&P 500 Top 100 holdings. 90% of the historical data was allocated for training. The remaining 10% was used for out-of-sample testing.
 
-The following figure shows an example of the trading model's performance during the beginning of training (NVDA).
+The following figure shows an example of the trading model's training performance (MSFT).
 
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/NVDA-train.png)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/MSFT-train.png)
 
-The following figure shows an example of the trading model's improved performance after some training (JPM).
-
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/JPM-train.png)
-
-The following figure shows an example of the trading model's out-of-sample performance after training (JPM).
+The following figure shows an example of the trading model's out-of-sample performance after training (MSFT).
 
 
 
