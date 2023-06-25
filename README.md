@@ -42,7 +42,7 @@ The following figure shows an example of the trading model's improved performanc
 
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/MSFT-train.png)
 
-The following figure shows an example of the trading model's out-of-sample performance after training ().
+The following figure shows an example of the trading model's out-of-sample performance after training (MSFT).
 
 
 
