@@ -35,10 +35,13 @@ void boot(int argc, char *argv[]) {
     checkpoint = argv[argc-1];
 
     std::cout << "\nDownloading... (this may take a while)\n\n";
-    //for(std::string &ind: indicators)
-        //download(ind);
+    for(std::string &ind: indicators) {
+        download(ind);
+        std::system(("./python/gbm.py " + ind).c_str()); // GBM simulation
+    }
     for(std::string &ticker: tickers) {
-        //download(ticker);
+        download(ticker);
+        std::system(("./python/gbm.py " + ticker).c_str()); // GBM simulation
         env[ticker] = historical_data(ticker, indicators);
     }
 

@@ -4,6 +4,7 @@ import sys
 import certifi
 import warnings
 import json, csv
+import pandas as pd
 from urllib.request import urlopen
 
 warnings.filterwarnings("ignore")
@@ -34,3 +35,6 @@ if __name__ == "__main__":
             header = False
         csv_writer.writerow(data.values())
     out.close()
+
+    dat = pd.read_csv("./data/{}.csv" .format(ticker)).loc[::-1][["date", "adjClose"]]
+    dat.to_csv("./data/{}.csv" .format(ticker), index=False)

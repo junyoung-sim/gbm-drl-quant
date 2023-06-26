@@ -39,6 +39,11 @@ void Quant::sync() {
 
 std::vector<double> Quant::sample_state(std::vector<std::vector<double>> &env, unsigned int t) {
     std::vector<double> state;
+    for(unsigned int i = 1; i < env.size(); i++) {
+        std::vector<double> dat = {env[i].begin() + t + 1 - obs, env[i].begin() + t + 1};
+        piecewise_aggregate_approximation(dat, paa_window);
+        state.insert(state.end(), dat.begin(), dat.end());
+    }
     return state;
 }
 
@@ -86,6 +91,77 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
     double rss = 0.00, mse = 0.00; // residual squared sum, mean squared error
 
     // train
+    std::shuffle(tickers.begin(), tickers.end(), seed);
+    for(std::string &ticker: tickers) {
+        unsigned int start = obs - 1;
+        unsigned int terminal = env[ticker][TICKER].size() * train;
+
+        std::ofstream out("./res/log");
+        out << "X,SPY,IEF,GSG,EUR=X,action,benchmark,model\n";
+
+        double benchmark = 1.00, model = 1.00;
+
+        for(unsigned int t = start; t <= terminal; t++) {
+            // exploration rate linear decay (reach minimum when replay memory fills up for the first time)
+            if(experiences <= capacity)
+                eps = (eps_min - eps_init) / capacity * experiences + eps_init;
+            
+            std::vector<double> state = sample_state(env[ticker], t); // sample current state
+            unsigned int action = epsilon_greedy(state, eps); // select action
+            double q = agent.back()->node(action)->sum(); // predicted q-value
+
+            // observe discrete reward from daily p&l
+            double diff = (env[ticker][TICKER][t+1] - env[ticker][TICKER][t]) / env[ticker][TICKER][t];
+            double observed_reward = (diff >= 0.00 ? action_space[action] : -action_space[action]);
+
+            // estimate long-term expeceted reward
+            std::vector<double> next_state = sample_state(env[ticker], t+1);
+            std::vector<double> tq = target.predict(next_state);
+
+            // estimate optimal q-value
+            double optimal = observed_reward + gamma * *std::max_element(tq.begin(), tq.end());
+
+            benchmark *= 1.00 + diff;
+            model *= 1.00 + diff * action_space[action];
+
+            rss += pow(optimal - q, 2);
+            mse = rss / ++experiences;
+
+            // output MDP log
+            for(unsigned int i = 1; i < env[ticker].size(); i++)
+                out << state[obs*i-1] << ","; // point value of most recent valuation score
+            out << action << "," << benchmark << "," << model << "\n";
+            std::cout << "(LOSS=" << mse << ", EPS=" << eps << ", ALPHA=" << alpha << ") ";
+            std::cout << "T=" << t << " @ " << ticker << " ACTION=" << action << " ";
+            std::cout << "-> OBS=" << observed_reward << " OPT=" << optimal << " ";
+            std::cout << "BENCH=" << benchmark << " " << "MODEL=" << model << "\n";
+
+            Memory memory(state, action, optimal);
+            replay_memory.push_back(memory);
+
+            if(replay_memory.size() == capacity) {
+                std::vector<unsigned int> index(capacity, 0);
+                std::iota(index.begin(), index.end(), 0);
+                std::shuffle(index.begin(), index.end(), seed);
+                index.erase(index.begin() + batch_size, index.end()); // randomly select 10 experiences
+
+                // learning rate exponential decay
+                alpha = alpha_init * exp(alpha_decay * (experiences - capacity) / (env_size - capacity));
+
+                //for(unsigned int k: index)
+                //    sgd(replay_memory[k], alpha, lambda); // update agent network
+                
+                replay_memory.erase(replay_memory.begin());
+            }
+        } sync(); // syncrhonize after each ticker
+
+        out.close();
+        std::system(("./python/log.py " + ticker + "-train").c_str()); // output training performance
+    }
+    save();
+
+    // test (out-of-sample)
+    
 }
 
 void Quant::sgd(Memory &memory, double alpha, double lambda) { // stochastic gradient descent (mse)

@@ -9,7 +9,7 @@
 #include <chrono>
 #include <map>
 
-#include "../lib/gbm.hpp"
+#include "../lib/data.hpp"
 #include "../lib/net.hpp"
 
 #define TICKER 0
@@ -37,7 +37,8 @@ private:
 
     const std::vector<double> action_space = {-1.0, 0.0, 1.0}; // short, idle, long
 
-
+    const unsigned int paa_window = 5; // discretization window (5 days)
+    const unsigned int obs = 100; // observation period
 
     std::string checkpoint;
     std::default_random_engine seed;
@@ -45,7 +46,7 @@ private:
 public:
     Quant() {}
     Quant(std::string path): checkpoint(path) {
-        init({{505,505},{505,505},{505,505},{505,3}});
+        init({{500,500},{500,500},{500,500},{500,3}});
         load();
     }
 
