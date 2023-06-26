@@ -39,21 +39,6 @@ void Quant::sync() {
 
 std::vector<double> Quant::sample_state(std::vector<std::vector<double>> &env, unsigned int t) {
     std::vector<double> state;
-    std::vector<double> valuation;
-    for(unsigned int i = 0; i < env.size(); i++) {
-        std::vector<double> dat = {env[i].begin() + t + 1 - obs, env[i].begin() + t + 1}; // raw price series of each security
-
-        double score = geometric_brownian_motion(dat, ext, epoch, seed); // valuation score
-        valuation.push_back(score);
-
-        // discretize and standardize raw price series of each security
-        piecewise_aggregate_approximation(dat, paa_window);
-        standardize(dat);
-        state.insert(state.end(), dat.begin(), dat.end());
-    }
-
-    state.insert(state.begin(), valuation.begin(), valuation.end());
-
     return state;
 }
 
@@ -101,107 +86,6 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
     double rss = 0.00, mse = 0.00; // residual squared sum, mean squared error
 
     // train
-    std::shuffle(tickers.begin(), tickers.end(), seed); // randomize order of training
-    for(std::string &ticker: tickers) {
-        unsigned int start = obs - 1;
-        unsigned int terminal = env[ticker][TICKER].size() * train;
-
-        std::ofstream out("./res/log");
-        out << "state,action,benchmark,model\n";
-
-        double benchmark = 1.00, model = 1.00;
-
-        for(unsigned int t = start; t <= terminal; t++) {
-            // exploration rate linear decay (reach minimum when replay memory fills up for the first time)
-            if(experiences <= capacity)
-                eps = (eps_min - eps_init) / capacity * experiences + eps_init;
-            
-            std::vector<double> state = sample_state(env[ticker], t); // sample current state
-            unsigned int action = epsilon_greedy(state, eps); // select action
-            double q = agent.back()->node(action)->sum(); // predicted q-value of selected action
-
-            // observe discrete reward from daily p&l
-            double diff = (env[ticker][TICKER][t+1] - env[ticker][TICKER][t]) / env[ticker][TICKER][t];
-            double observed_reward = (diff >= 0 ? action_space[action] : -action_space[action]); // +1 for profit and -1 for loss
-
-            // estimate discounted long-term reward
-            std::vector<double> next_state = sample_state(env[ticker], t+1);
-            std::vector<double> tq = target.predict(next_state);
-
-            // estiamte optimal q-value of selected action
-            double optimal = observed_reward + gamma * *std::max_element(tq.begin(), tq.end());
-
-            // track historical return-on-investment
-            benchmark *= 1.00 + diff;
-            model *= 1.00 + diff * action_space[action];
-
-            // track model cost
-            rss += pow(optimal - q, 2);
-            mse = rss / ++experiences;
-
-            // output MDP log
-            out << state[TICKER] << "," << action << "," << benchmark << "," << model << "\n";
-            std::cout << "(LOSS=" << mse << " EPS=" << eps << " ALPHA=" << alpha << ") ";
-            std::cout << "T=" << t << " @ " << ticker << " ACTION=" << action << " ";
-            std::cout << "-> OBS=" << observed_reward << " OPT=" << optimal << " ";
-            std::cout << "BENCH=" << benchmark << " " << "MODEL=" << model << "\n";
-
-            // save experience
-            Memory memory(state, action, optimal);
-            replay_memory.push_back(memory);
-
-            if(replay_memory.size() == capacity) {
-                std::vector<unsigned int> index(capacity, 0);
-                std::iota(index.begin(), index.end(), 0);
-                std::shuffle(index.begin(), index.end(), seed);
-                index.erase(index.begin() + batch_size, index.end()); // randomly select 10 experiences
-
-                // expotentially decaying learning rate
-                alpha = alpha_init * exp(alpha_decay * (experiences - capacity) / (env_size - capacity));
-
-                for(unsigned int k: index)
-                    sgd(replay_memory[k], alpha, lambda); // update agent network
-                
-                replay_memory.erase(replay_memory.begin()); // remove oldest experience
-            }
-        } sync(); // synchronize target network to agent network
-
-        out.close();
-        std::system(("./python/log.py " + ticker + "-train").c_str()); // plot
-    }
-    save();
-
-    // test (out-of-sample)
-    for(std::string &ticker: tickers) {
-        unsigned int start = env[ticker][TICKER].size() * train + 1;
-        unsigned int terminal = env[ticker][TICKER].size() - 2;
-
-        std::ofstream out("./res/log");
-        out << "state,action,benchmark,model\n";
-
-        double benchmark = 1.00, model = 1.00;
-
-        for(unsigned int t = start; t <= terminal; t++) {
-            std::vector<double> state = sample_state(env[ticker], t); // sample state
-            unsigned int action = greedy(state); // select action
-
-            // observe daily p&l
-            double diff = (env[ticker][TICKER][t+1] - env[ticker][TICKER][t]) / env[ticker][TICKER][t];
-            benchmark *= 1.00 + diff;
-            model *= 1.00 + diff * action_space[action];
-
-            // output MDP log
-            out << state[TICKER] << "," << action << "," << benchmark << "," << model << "\n";
-            std::cout << "T=" << t << " @ " << ticker << " ACTION=" << action << " ";
-            std::cout << "BENCH=" << benchmark << " MODEL=" << model << "\n";
-        }
-
-        out.close();
-        std::system(("./python/log.py " + ticker + "-test").c_str()); // plot
-        std::system(("./python/stats.py push " + ticker).c_str()); // analyze
-    }
-
-    std::system("./python/stats.py summary"); // output test performance
 }
 
 void Quant::sgd(Memory &memory, double alpha, double lambda) { // stochastic gradient descent (mse)
