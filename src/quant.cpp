@@ -161,7 +161,38 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
     save();
 
     // test (out-of-sample)
-    
+    for(std::string &ticker: tickers) {
+        unsigned int start = env[ticker][TICKER].size() * train + 1;
+        unsigned int terminal = env[ticker][TICKER].size() - 2;
+
+        std::ofstream out("./res/log");
+        out << "X,SPY,IEF,GSG,EUR=X,action,benchmark,model\n";
+
+        double benchmark = 1.00, model = 1.00;
+
+        for(unsigned int t = start; t <= terminal; t++) {
+            std::vector<double> state = sample_state(env[ticker], t);
+            unsigned int action = greedy(state); // test the model's greedy policy
+
+            // observe daily p&l
+            double diff = (env[ticker][TICKER][t+1] - env[ticker][TICKER][t]) / env[ticker][TICKER][t];
+            benchmark *= 1.00 + diff;
+            model *= 1.00 + diff * action_space[action];
+
+            // output MDP log
+            for(unsigned int i = 1; i < env[ticker].size(); i++)
+                out << state[obs*i-1] << ","; // point value of most recent valuation score
+            out << action << "," << benchmark << "," << model << "\n";
+            std::cout << "T=" << t << " @ " << ticker << " ACTION=" << action << " ";
+            std::cout << "DIFF=" << diff << " BENCH=" << benchmark << " MODEL=" << model << "\n";
+        }
+
+        out.close();
+        std::system(("./python/log.py " + ticker + "-test").c_str()); // output test performance
+        std::system(("./python/stats.py push " + ticker).c_str()); // analyze test performance
+    }
+
+    std::system("./python/stats.py summary"); // summarize test performance
 }
 
 void Quant::sgd(Memory &memory, double alpha, double lambda) { // stochastic gradient descent (mse)
