@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 path = sys.argv[1]
 log = pd.read_csv("./res/log")
 
-plt.figure(figsize=(15,15))
+plt.figure(figsize=(20,20))
 
 plt.subplot(3, 1, 1)
 plt.title("State")
@@ -16,7 +16,6 @@ plt.plot(log["SPY"], label="SPY", color="steelblue")
 plt.plot(log["IEF"], label="IEF", color="dodgerblue")
 plt.plot(log["GSG"], label="GSG", color="lightskyblue")
 plt.plot(log["EUR=X"], label="EUR=X", color="cornflowerblue")
-plt.ylim(0, 1)
 plt.legend()
 
 plt.subplot(3, 1, 2)

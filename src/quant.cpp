@@ -41,7 +41,7 @@ std::vector<double> Quant::sample_state(std::vector<std::vector<double>> &env, u
     std::vector<double> state;
     for(unsigned int i = 1; i < env.size(); i++) {
         std::vector<double> dat = {env[i].begin() + t + 1 - obs, env[i].begin() + t + 1};
-        piecewise_aggregate_approximation(dat, paa_window);
+        standardize(dat);
         state.insert(state.end(), dat.begin(), dat.end());
     }
     return state;
@@ -148,8 +148,8 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
                 // learning rate exponential decay
                 alpha = alpha_init * exp(alpha_decay * (experiences - capacity) / (env_size - capacity));
 
-                //for(unsigned int k: index)
-                //    sgd(replay_memory[k], alpha, lambda); // update agent network
+                for(unsigned int k: index)
+                    sgd(replay_memory[k], alpha, lambda); // update agent network
                 
                 replay_memory.erase(replay_memory.begin());
             }

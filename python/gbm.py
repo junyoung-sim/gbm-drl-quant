@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 OBS = 100 # observation period
 EXT = 50 # extrapolation period
-EPOCH = 100 # simulation epochs
+EPOCH = 1000 # simulation epochs
 
 def main():
     ticker = sys.argv[1]
