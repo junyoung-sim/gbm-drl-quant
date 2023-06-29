@@ -41,7 +41,6 @@ std::vector<double> Quant::sample_state(std::vector<std::vector<double>> &env, u
     std::vector<double> state;
     for(unsigned int i = 1; i < env.size(); i++) {
         std::vector<double> dat = {env[i].begin() + t + 1 - obs, env[i].begin() + t + 1};
-        standardize(dat);
         state.insert(state.end(), dat.begin(), dat.end());
     }
     return state;
@@ -114,7 +113,7 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
             double diff = (env[ticker][TICKER][t+1] - env[ticker][TICKER][t]) / env[ticker][TICKER][t];
             double observed_reward = (diff >= 0.00 ? action_space[action] : -action_space[action]);
 
-            // estimate long-term expeceted reward
+            // estimate long-term expected reward
             std::vector<double> next_state = sample_state(env[ticker], t+1);
             std::vector<double> tq = target.predict(next_state);
 

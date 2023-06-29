@@ -30,13 +30,13 @@ The graph on the top shows the valuation series of the S&P 500 obtained from the
 
 ## GBM + Generalized Deep Reinforcement Learning = ?!
 
-This trading model combines the aforementioned GBM simulation with Generalized Deep Reinforcement Learning for Trading (https://github.com/junyoung-sim/quant). Instead of observing the PAA-discretized and standardized price series of a stock of interest and major market-indicating securities (SPY, IEF, EUR=X, GSG) as in the original research, the trading model observes a multivariate state space that consists of the valuation series of the stock of interest and the four market-indicating securities obtained through the GBM simulations with an observation period of (100) days, an extrapolation period of (50) days, and (1000) sample paths.
+This trading model combines the aforementioned GBM simulation with Generalized Deep Reinforcement Learning for Trading (https://github.com/junyoung-sim/quant). Instead of observing the PAA-discretized and standardized price series of a stock of interest and major market-indicating securities (SPY, IEF, EUR=X, GSG) as in the original research, the trading model observes a multivariate state space that consists of the standardized valuation series of the stock of interest and the four market-indicating securities obtained through the GBM simulations with an observation period of (100) days, an extrapolation period of (50) days, and (1000) sample paths.
 
 The trading model was trained on the S&P 500 Top 100 holdings. 90% of the historical data was allocated for training. The remaining 10% was used for out-of-sample testing.
 
-The following figure shows an example of the trading model's training performance (BAC).
+The following figure shows an example of the trading model's training performance (BLK).
 
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/BAC-train.png)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/BLK-train.png)
 
 The following figure shows an example of the trading model's out-of-sample performance after training ().
 

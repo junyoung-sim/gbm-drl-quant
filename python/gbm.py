@@ -44,6 +44,8 @@ def main():
         print("GBM SIM. T={} @ {} SCORE={}" .format(T, ticker, score))
     
     scores = np.array(scores)
+    scores = (scores - scores.mean()) / np.std(scores)
+
     raw = raw.iloc[-scores.shape[0]:]
     raw["gbm_score"] = scores
 
