@@ -36,7 +36,7 @@ The trading model was trained on the S&P 500 Top 100 holdings. 90% of the histor
 
 The following figure shows an example of the trading model's training performance (BLK).
 
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/BLK-train.png)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/1/BLK-train.png)
 
 The following figure shows an example of the trading model's out-of-sample performance after training ().
 
