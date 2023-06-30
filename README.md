@@ -42,4 +42,4 @@ The following figure shows an example of the trading model's out-of-sample perfo
 
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/1/PFE-test.png)
 
-***WORK IN PROGRESS: Both the equal-weight S&P 500 benchmark and the trading model are basically flat during this test period. The short testin period made it difficult to evaluate the trading model's long-term performance against the benchmark, so increasing the testing period to 20-30% should be attempted. The trading model still exhibits great potential!***
+***WORK IN PROGRESS: Both the equal-weight S&P 500 benchmark and the trading model are basically flat during this test period. The short testing period made it difficult to evaluate the trading model's long-term performance against the benchmark, so increasing the testing period to 20-30% should be attempted. The trading model still exhibits great potential!***
