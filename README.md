@@ -38,9 +38,11 @@ The following figure shows an example of the trading model's training performanc
 
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/1/BLK-train.png)
 
-The following figure shows an example of the trading model's out-of-sample performance after training ().
+The following figure shows an example of the trading model's out-of-sample performance after training (PFE).
 
-![alt text]()
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/1/PFE-test.png)
+
+***WORK IN PROGRESS: Both the equal-weight S&P 500 benchmark and the trading model are basically flat during this test period. The short test period makes it difficult to observe whether the trading model can outperform the benchmark, so increasing the testing to period to 20-30% should be attempted. The trading model still exhibits great potential!***
 
 The following table summarizes and compares the trading model's out-of-sample performance to that of the buy-and-hold benchmark.
 
@@ -52,9 +54,5 @@ The following table summarizes and compares the trading model's out-of-sample pe
 | MDD    | 0.0000    | 0.0000 |
 
 E(R) = annualized return, SD(R) = return standard deviation, SR = sharpe ratio, MDD = maximum drawdown
-
-The following figure shows an example of up-to-date model performance ().
-
-![alt text]()
 
 ***Refer to ./res for full build and test results along with up-to-date model outputs.***
