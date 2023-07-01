@@ -152,7 +152,7 @@ void Quant::build(std::vector<std::string> &tickers, Environment &env, double tr
                 
                 replay_memory.erase(replay_memory.begin());
             }
-        } sync(); // syncrhonize after each ticker
+        } sync(); // synchronize after each ticker
 
         out.close();
         std::system(("./python/log.py " + ticker + "-train").c_str()); // output training performance
