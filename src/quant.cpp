@@ -197,9 +197,10 @@ void Quant::sgd(Memory &memory, double alpha, double lambda) { // stochastic gra
 }
 
 void Quant::test(std::vector<std::string> &tickers, Environment &env) {
+    std::vector<int> action_count = {0, 0, 0};
     for(std::string &ticker: tickers) {
         unsigned int start = obs - 1;
-        unsigned int terminal = env[ticker][TICKER].size() - 2;
+        unsigned int terminal = env[ticker][TICKER].size() - 1;
 
         std::ofstream out("./res/log");
         out << "X,SPY,IEF,GSG,EUR=X,action,benchmark,model\n";
@@ -209,6 +210,11 @@ void Quant::test(std::vector<std::string> &tickers, Environment &env) {
         for(unsigned int t = start; t <= terminal; t++) {
             std::vector<double> state = sample_state(env[ticker], t);
             unsigned int action = greedy(state); // test the model's greedy policy
+
+            if(t == terminal) {
+                action_count[action]++; // count actions for upcoming market day
+                continue;
+            }
 
             // observe daily p&l
             double diff = (env[ticker][TICKER][t+1] - env[ticker][TICKER][t]) / env[ticker][TICKER][t];
@@ -229,6 +235,10 @@ void Quant::test(std::vector<std::string> &tickers, Environment &env) {
     }
 
     std::system("./python/stats.py summary"); // summarize test performance
+
+    std::cout << "\nAction (0) - Short: " << (double)action_count[0] * 100 / tickers.size() << "%\n";
+    std::cout << "Action (1) - Idle : " << (double)action_count[1] * 100 / tickers.size() << "%\n";
+    std::cout << "Action (2) - Long : " << (double)action_count[2] * 100 / tickers.size() << "%\n";
 }
 
 void Quant::save() {
