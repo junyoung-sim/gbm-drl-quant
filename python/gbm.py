@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 OBS = 100 # observation period
-EXT = 50 # extrapolation period
+EXT = 20 # extrapolation period
 EPOCH = 1000 # simulation epochs
 
 def main():

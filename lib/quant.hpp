@@ -58,8 +58,10 @@ public:
     unsigned int greedy(std::vector<double> &state);
     unsigned int epsilon_greedy(std::vector<double> &state, double eps);
 
-    void build(std::vector<std::string> &tickers, Environment &env, double train);
+    void build(std::vector<std::string> &tickers, Environment &env);
     void sgd(Memory &memory, double alpha, double lambda);
+
+    void test(std::vector<std::string> &tickers, Environment &env);
 
     void save();
     void load();

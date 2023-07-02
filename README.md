@@ -32,14 +32,23 @@ The graph on the top shows the valuation series of the S&P 500 obtained from the
 
 This trading model combines the aforementioned GBM simulation with Generalized Deep Reinforcement Learning for Trading (https://github.com/junyoung-sim/quant). Instead of observing the PAA-discretized and standardized price series of a stock of interest and major market-indicating securities (SPY, IEF, EUR=X, GSG) as in the original research, the trading model observes a multivariate state space that consists of the standardized valuation series of the stock of interest and the four market-indicating securities obtained through the GBM simulations with an observation period of (100) days, an extrapolation period of (50) days, and (1000) sample paths.
 
-The trading model was trained on the S&P 500 Top 100 holdings. 90% of the historical data was allocated for training. The remaining 10% was used for out-of-sample testing.
+The trading model was trained on the S&P 500 Top 50 holdings and tested on the Top 100 holdings.
 
-The following figure shows an example of the trading model's training performance (BLK).
+The following figure shows an example of the trading model's training performance (JPM).
 
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/1/BLK-train.png)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/build/JPM-train.png)
 
-The following figure shows an example of the trading model's out-of-sample performance after training (PFE).
+The following figure shows an example of the trading model's out-of-sample performance after training (BLK).
 
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/1/PFE-test.png)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/BLK-test.png)
 
-***WORK IN PROGRESS: Both the equal-weight S&P 500 benchmark and the trading model are basically flat during this test period. The short testing period made it difficult to evaluate the trading model's long-term performance against the benchmark, so increasing the testing period to 20-30% should be attempted. The trading model still exhibits great potential!***
+| Metric | Benchmark | Model  |
+|--------|-----------|--------|
+| E(R)   | 0.1261    | 0.2648 |
+| SD(R)  | 0.2743    | 0.4069 |
+| SR     | 0.4599    | 0.6507 |
+| MDD    | 0.5919    | 0.4402 |
+
+E(R) = annualized return, SD(R) = return standard deviation, SR = sharpe ratio, MDD = maximum drawdown
+
+**Refer to ./res for full build, test, and up-to-date model outputs**

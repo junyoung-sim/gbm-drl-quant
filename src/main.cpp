@@ -24,13 +24,9 @@ std::string checkpoint;
 
 Environment env; // (ticker, dataset)
 
-double train = 0.90;
-
 void boot(int argc, char *argv[]) {
     mode = argv[1];
-    if(mode == "build")
-        train = std::stod(argv[2]);
-    for(int i = 3; i < argc - 1; i++)
+    for(int i = 2; i < argc - 1; i++)
         tickers.push_back(argv[i]);
     checkpoint = argv[argc-1];
 
@@ -56,7 +52,11 @@ int main(int argc, char *argv[])
 
     Quant quant(checkpoint);
 
-    quant.build(tickers, env, train);
+    if(mode == "build")
+        quant.build(tickers, env);
+    
+    if(mode == "test")
+        quant.test(tickers, env);
 
     return 0;
 }
