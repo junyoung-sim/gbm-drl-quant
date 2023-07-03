@@ -236,9 +236,10 @@ void Quant::test(std::vector<std::string> &tickers, Environment &env) {
 
     std::system("./python/stats.py summary"); // summarize test performance
 
-    std::cout << "\nAction (0) - Short: " << (double)action_count[0] * 100 / tickers.size() << "%\n";
-    std::cout << "Action (1) - Idle : " << (double)action_count[1] * 100 / tickers.size() << "%\n";
-    std::cout << "Action (2) - Long : " << (double)action_count[2] * 100 / tickers.size() << "%\n";
+    std::cout << "\n";
+    std::cout << "ACTION (0) - SHORT: " << action_count[0] << "\n";
+    std::cout << "ACTION (1) - IDLE : " << action_count[1] << "\n";
+    std::cout << "ACTION (2) - LONG : " << action_count[2] << "\n";
 }
 
 void Quant::save() {
