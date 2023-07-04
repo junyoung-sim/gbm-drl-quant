@@ -40,6 +40,7 @@ void Quant::sync() {
 std::vector<double> Quant::sample_state(std::vector<std::vector<double>> &env, unsigned int t) {
     std::vector<double> state;
     for(unsigned int i = 1; i < env.size(); i++) {
+        // observe valuation series of each security within the observation period
         std::vector<double> dat = {env[i].begin() + t + 1 - obs, env[i].begin() + t + 1};
         state.insert(state.end(), dat.begin(), dat.end());
     }
