@@ -46,10 +46,10 @@ BLK (untrained)
 
 | Metric | Benchmark | Model  |
 |--------|-----------|--------|
-| E(R)   | 0.1263    | 0.3850 |
-| SD(R)  | 0.2742    | 0.5409 |
-| SR     | 0.4604    | 0.7118 |
-| MDD    | 0.5919    | 0.4274 |
+| E(R)   | 0.1263    | 0.4110 |
+| SD(R)  | 0.2742    | 0.7240 |
+| SR     | 0.4604    | 0.5677 |
+| MDD    | 0.5919    | 0.4253 |
 
 E(R) = annualized return, SD(R) = return standard deviation, SR = sharpe ratio, MDD = maximum drawdown
 
