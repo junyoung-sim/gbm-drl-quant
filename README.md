@@ -1,7 +1,5 @@
 # Geometric Brownian Motion and Generalized Deep Reinforcement Learning for Low-Frequency Trading
 
-***WORK IN PROGRESS***
-
 This AI trading model consists of two major components:
 
     (1) Geometric Brownian Motion for price simulation and short-term valuation cycle estimation
