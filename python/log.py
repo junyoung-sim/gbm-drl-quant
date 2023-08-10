@@ -31,10 +31,10 @@ plt.legend()
 
 ###
 
-benchmark = log["benchmark"][-100:]
+benchmark = log["benchmark"][-252:]
 benchmark = (benchmark - benchmark.iloc[0]) * 100 / benchmark.iloc[0]
 
-model = log["model"][-100:]
+model = log["model"][-252:]
 model = (model - model.iloc[0]) * 100 / model.iloc[0]
 
 plt.subplot(4, 1, 4)
