@@ -39,8 +39,8 @@ The following figures are examples of the trading model's up-to-date test perfor
 AAPL (trained)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/AAPL-test.png)
 
-BLK (untrained)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/BLK-test.png)
+GS (untrained)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/GS-test.png)
 
 | Metric | Benchmark | Model  |
 |--------|-----------|--------|
