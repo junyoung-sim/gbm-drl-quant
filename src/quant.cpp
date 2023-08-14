@@ -202,6 +202,7 @@ void Quant::test(std::vector<std::string> &tickers, Environment &env) {
     for(std::string &ticker: tickers) {
         unsigned int start = obs - 1;
         unsigned int terminal = env[ticker][TICKER].size() - 1;
+        unsigned int next_action; // action for next market day
 
         std::ofstream out("./res/log");
         out << "X,SPY,IEF,GSG,EUR=X,action,benchmark,model\n";
@@ -213,7 +214,8 @@ void Quant::test(std::vector<std::string> &tickers, Environment &env) {
             unsigned int action = greedy(state); // test the model's greedy policy
 
             if(t == terminal) {
-                action_count[action]++; // count actions for upcoming market day
+                action_count[action]++; // count actions for next market day
+                next_action = action;
                 continue;
             }
 
@@ -231,7 +233,7 @@ void Quant::test(std::vector<std::string> &tickers, Environment &env) {
         }
 
         out.close();
-        std::system(("./python/log.py " + ticker + "-test").c_str()); // output test performance
+        std::system(("./python/log.py " + ticker + "-" + std::to_string(next_action)).c_str()); // output test performance
         std::system(("./python/stats.py push " + ticker).c_str()); // analyze test performance
     }
 
