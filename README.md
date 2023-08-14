@@ -34,20 +34,20 @@ The trading model was trained ***twice*** on the S&P 500 Top 50 holdings. Traini
 
 Up-to-date testing is done on the S&P 500 Top 100 holdings.
 
-The following figures are examples of the trading model's up-to-date test performance. Refer to ./res for full build and up-to-date test outputs.
+The following figures are examples of the trading model's up-to-date figures. Refer to ./res for full build and up-to-date test outputs.
 
-AAPL (trained)
+AAPL (simulated price movements)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/AAPL-sim.png)
+
+AAPL (up-to-date test performance)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/AAPL-test.png)
-
-GS (untrained)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/GS-test.png)
 
 | Metric | Benchmark | Model  |
 |--------|-----------|--------|
-| E(R)   | 0.1281    | 0.4164 |
-| SD(R)  | 0.2740    | 0.7130 |
-| SR     | 0.4674    | 0.5841 |
-| MDD    | 0.5919    | 0.4257 |
+| E(R)   | 0.1266    | 0.4195 |
+| SD(R)  | 0.2776    | 0.6050 |
+| SR     | 0.4559    | 0.6934 |
+| MDD    | 0.5918    | 0.4233 |
 
 E(R) = annualized return, SD(R) = return standard deviation, SR = sharpe ratio, MDD = maximum drawdown
 
