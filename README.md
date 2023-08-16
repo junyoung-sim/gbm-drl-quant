@@ -36,11 +36,11 @@ Up-to-date testing is done on the S&P 500 Top 100 holdings and compared against 
 
 The following are examples of the trading model's up-to-date figures. Refer to ./res for full build and up-to-date test outputs.
 
-AAPL (simulated price movements)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/AAPL-sim.png)
+BLK (simulated price movements)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/BLK-sim.png)
 
-AAPL (up-to-date test performance)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/AAPL-test.png)
+BLK (up-to-date test performance)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/BLK-test.png)
 
 | Metric | Benchmark | Model  |
 |--------|-----------|--------|
