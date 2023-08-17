@@ -34,8 +34,6 @@ The trading model was trained ***twice*** on the S&P 500 Top 50 holdings. Traini
 
 Up-to-date testing are done on Dow and Nasdaq for simplicity. The benchmark is assumed to be an equal weight portfolio of Dow and Nasdaq.
 
-The following are examples of the trading model's up-to-date figures. Refer to ./res for full build and up-to-date test outputs.
-
 DIA (simulated price movements)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/DIA-sim.png)
 
