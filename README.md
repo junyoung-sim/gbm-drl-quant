@@ -32,7 +32,7 @@ This trading model combines the aforementioned GBM simulation with Generalized D
 
 The trading model was trained ***twice*** on the S&P 500 Top 50 holdings. Training the model multiple times benefits performance by providing the model with more experiences in observing many representations of each security's valuation series that slightly differ but are fundamentally equivalent due to the randomness involved in every GBM simulation.
 
-Up-to-date testing are done on Dow and Nasdaq for simplicity. The benchmark is assumed to be an equal weight portfolio of Dow and Nasdaq.
+Up-to-date testing is done on the Dow and Nasdaq indexes for simplicity.
 
 DIA (simulated price movements)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/DIA-sim.png)
@@ -52,6 +52,8 @@ QQQ (up-to-date test performance)
 | SD(R)  | 0.1596    | 0.4109 |
 | SR     | 0.6960    | 1.1598 |
 | MDD    | 0.5264    | 0.2391 |
+
+The benchmark is the average performance of the Dow and Nasdaq indexes.
 
 E(R) = annualized return, SD(R) = return standard deviation, SR = sharpe ratio, MDD = maximum drawdown
 
