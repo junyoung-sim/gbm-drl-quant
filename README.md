@@ -40,11 +40,17 @@ DIA (simulated price movements)
 DIA (up-to-date test performance)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/DIA-test.png)
 
+DIA (action analytics: distribution of actions by valuation score of DIA)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/DIA-analytics.png)
+
 QQQ (simulated price movements)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/QQQ-sim.png)
 
 QQQ (up-to-date test performance)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/QQQ-test.png)
+
+QQQ (action analytics: distribution of actions by valuation score of QQQ)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/QQQ-analytics.png)
 
 | Metric | Benchmark | Model  |
 |--------|-----------|--------|

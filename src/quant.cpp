@@ -233,6 +233,7 @@ void Quant::test(std::vector<std::string> &tickers, Environment &env) {
         out.close();
         std::system(("./python/log.py " + ticker + "-test").c_str()); // output test performance
         std::system(("./python/stats.py push " + ticker).c_str()); // analyze test performance
+        std::system(("./python/analytics.py " + ticker).c_str()); // analyze model actions
     }
 
     std::system("./python/stats.py summary"); // summarize test performance
