@@ -8,11 +8,7 @@ This AI trading model consists of two major components:
 
 ## Geometric Brownian Motion for Estimating Short-Term Valuation Cycles
 
-Geometric Brownian Motion is a stochastic process that models a randomly varying quantity following a Brownian motion with drift. It is a popular stochastic method for simulating stock prices that follow a trend while experiencing a random walk of up-and-downs characterizing risk. The following resources were used:
-
-http://www.columbia.edu/~ks20/FE-Notes/4700-07-Notes-BM.pdf
-
-http://www.columbia.edu/~ks20/FE-Notes/4700-07-Notes-GBM.pdf
+Geometric Brownian Motion is a stochastic process that models a randomly varying quantity following a Brownian motion with drift. It is a popular stochastic method for simulating stock prices that follow a trend while experiencing a random walk of up-and-downs characterizing risk.
 
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/etc/gbm_sample_path.png)
 
