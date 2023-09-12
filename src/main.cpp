@@ -30,6 +30,8 @@ void boot(int argc, char *argv[]) {
         tickers.push_back(argv[i]);
     checkpoint = argv[argc-1];
 
+    std::system("rm ./res/log ./res/stats ./res/*.png");
+
     std::cout << "\nDownloading... (this may take a while)\n\n";
     for(std::string &ind: indicators) {
         download(ind);
