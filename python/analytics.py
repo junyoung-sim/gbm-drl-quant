@@ -16,10 +16,13 @@ for col in log.columns[:-3]:
     idle_valuations = log[col][log["action"] == 1]
     long_valuations = log[col][log["action"] == 2]
 
-    plt.subplot(2, 3, k)
-    plt.hist(short_valuations, bins=np.arange(-3, 3.1, 0.1), histtype="step", label="Short", color="steelblue")
-    plt.hist(idle_valuations, bins=np.arange(-3, 3.1, 0.1), histtype="step", label="Idle", color="lightskyblue")
-    plt.hist(long_valuations, bins=np.arange(-3, 3.1, 0.1), histtype="step", label="Long", color="cadetblue")
+    ax = plt.subplot(2, 3, k)
+    ax.hist(short_valuations, bins=np.arange(-3, 3.1, 0.1), histtype="step", label="Short", color="steelblue")
+    ax.hist(idle_valuations, bins=np.arange(-3, 3.1, 0.1), histtype="step", label="Idle", color="lightskyblue")
+    ax.hist(long_valuations, bins=np.arange(-3, 3.1, 0.1), histtype="step", label="Long", color="cadetblue")
+    
+    ax.vlines(log[col].iloc[-1], 0, ax.get_ylim()[1], color="red")
+
     plt.ylabel("Count")
     plt.xlabel("{} Valuation Score" .format(col))
     plt.legend()
