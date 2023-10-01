@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-OBS = 100 # observation period
+OBS = 60 # observation period
 EXT = 20 # extrapolation period
 EPOCH = 1000 # simulation epochs
 

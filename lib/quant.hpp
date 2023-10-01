@@ -37,7 +37,6 @@ private:
 
     const std::vector<double> action_space = {-1.0, 0.0, 1.0}; // short, idle, long
 
-    const unsigned int paa_window = 5; // discretization window (5 days)
     const unsigned int obs = 100; // observation period
 
     std::string checkpoint;
@@ -46,7 +45,7 @@ private:
 public:
     Quant() {}
     Quant(std::string path): checkpoint(path) {
-        init({{500,500},{500,500},{500,500},{500,3}});
+        init({{500,500},{500,500},{500,500},{500,500},{500,500},{500,3}});
         load();
     }
 

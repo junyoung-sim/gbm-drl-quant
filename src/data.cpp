@@ -49,37 +49,3 @@ std::vector<std::vector<double>> historical_data(std::string ticker, std::vector
     // each row has the historical data of the ticker and each indicator
     return read_csv("./data/cleaned.csv");
 }
-
-double mean(std::vector<double> &dat) {
-    double sum = 0.00;
-    for(double &x: dat)
-        sum += x;
-    return sum / dat.size();
-}
-
-double stdev(std::vector<double> &dat) {
-    double s = 0.00;
-    double m = mean(dat);
-    for(double &x: dat)
-        s += pow(x - m, 2);
-    s /= dat.size() - 1;
-    s = sqrt(s);
-    return s;
-}
-
-void piecewise_aggregate_approximation(std::vector<double> &dat, unsigned int window) {
-    // discretizing time series by averaging equally split windows
-    for(unsigned int t = 0; t <= dat.size() - window; t += window) {
-        std::vector<double> piece = {dat.begin() + t, dat.begin() + t + window};
-        double approx = mean(piece);
-        for(unsigned int i = t; i < t + window; i++)
-            dat[i] = approx;
-    }
-}
-
-void standardize(std::vector<double> &dat) {
-    double m = mean(dat);
-    double s = stdev(dat);
-    for(double &x: dat)
-        x = (x - m) / s;
-}
