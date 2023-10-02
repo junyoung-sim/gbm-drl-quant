@@ -12,18 +12,32 @@ plt.figure(figsize=(15,8))
 
 k = 1
 for col in log.columns[:-3]:
-    short_valuations = log[col][log["action"] == 0]
-    idle_valuations = log[col][log["action"] == 1]
-    long_valuations = log[col][log["action"] == 2]
-
-    ax = plt.subplot(2, 3, k)
-    ax.hist(short_valuations, bins=np.arange(-3, 3.1, 0.1), histtype="step", label="Short", color="steelblue")
-    ax.hist(idle_valuations, bins=np.arange(-3, 3.1, 0.1), histtype="step", label="Idle", color="lightskyblue")
-    ax.hist(long_valuations, bins=np.arange(-3, 3.1, 0.1), histtype="step", label="Long", color="cadetblue")
+    amap = np.zeros((3, 5))
+    action = [0, 1, 2] # short, idle, long
+    valuation = [-2, -1, 0, 1, 2] # valuation scores (int)
+    for a in action:
+        for v in valuation:
+            if v == -2:
+                pv = np.sum(np.trunc(log[col]) <= v) / log[col].shape[0]
+                pav = np.sum([(np.trunc(log[col]) <= v) & (log["action"] == a)]) / log[col].shape[0]
+            elif v == 2:
+                pv = np.sum(np.trunc(log[col]) >= v) / log[col].shape[0]
+                pav = np.sum([(np.trunc(log[col]) >= v) & (log["action"] == a)]) / log[col].shape[0]
+            else:
+                pv = np.sum(np.trunc(log[col]) == v) / log[col].shape[0]
+                pav = np.sum([(np.trunc(log[col]) == v) & (log["action"] == a)]) / log[col].shape[0]
+            if pv == 0:
+                amap[a][v+2] = 0
+            else:
+                amap[a][v+2] = pav / pv
     
-    ax.vlines(log[col].iloc[-1], 0, ax.get_ylim()[1], color="red")
+    ax = plt.subplot(2, 3, k)
+    ax.plot(valuation, amap[0], label="Short", color="steelblue")
+    ax.plot(valuation, amap[1], label="Idle", color="lightskyblue")
+    ax.plot(valuation, amap[2], label="Long", color="cadetblue")    
+    ax.vlines(log[col].iloc[-1], 0, 1, color="red")
 
-    plt.ylabel("Count")
+    plt.ylabel("Probability")
     plt.xlabel("{} Valuation Score" .format(col))
     plt.legend()
 
