@@ -38,7 +38,7 @@ DIA: Dow Jones Industrial Average (simulated price movements)
 DIA: Dow Jones Industrial Average (up-to-date test performance)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/DIA-test.png)
 
-DIA: Dow Jones Industrial Average (distribution of valuation scores by model actions for DIA)
+DIA: Dow Jones Industrial Average (probability of each action given truncated valuation scores)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/DIA-analytics.png)
 
 QQQ: NASDAQ Composite Index (simulated price movements)
@@ -47,7 +47,7 @@ QQQ: NASDAQ Composite Index (simulated price movements)
 QQQ: NASDAQ Composite Index (up-to-date test performance)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/QQQ-test.png)
 
-QQQ: NASDAQ Composite Index (distribution of valuation scores by model actions for QQQ)
+QQQ: NASDAQ Composite Index (probability of each action given truncated valuation scores)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/QQQ-analytics.png)
 
 Benchmark: DIA + QQQ (equal weight)
