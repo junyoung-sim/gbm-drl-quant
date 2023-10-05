@@ -12,33 +12,40 @@ plt.figure(figsize=(30,20))
 plt.subplot(4, 2, 1)
 plt.title("State: X")
 plt.plot(log["X"], label="X", color="cadetblue")
+plt.legend()
 
 plt.subplot(4, 2, 2)
 plt.title("State: SPY")
 plt.plot(log["SPY"], label="SPY", color="steelblue")
+plt.legend()
 
 plt.subplot(4, 2, 4)
 plt.title("State: IEF")
 plt.plot(log["IEF"], label="IEF", color="dodgerblue")
+plt.legend()
 
 plt.subplot(4, 2, 6)
 plt.title("State: GSG")
 plt.plot(log["GSG"], label="GSG", color="lightskyblue")
+plt.legend()
 
 plt.subplot(4, 2, 8)
 plt.title("State: EUR=X")
 plt.plot(log["EUR=X"], label="EUR=X", color="cornflowerblue")
+plt.legend()
 
 #####
 
 plt.subplot(4, 2, 3)
 plt.title("Action")
 plt.plot(log["action"], label="0: Short\n1: Idle\n2: Long", color="steelblue")
+plt.legend()
 
 plt.subplot(4, 2, 5)
 plt.title("Reward (Historical)")
 plt.plot(log["benchmark"], label="Benchmark", color="cadetblue")
 plt.plot(log["model"], label="Model", color="steelblue")
+plt.legend()
 
 #####
 
@@ -52,5 +59,6 @@ plt.subplot(4, 2, 7)
 plt.title("Reward (Recent)")
 plt.plot(benchmark, label="Benchmark", color="cadetblue")
 plt.plot(model, label="Model", color="steelblue")
+plt.legend()
 
 plt.savefig("./res/{}.png" .format(path))
