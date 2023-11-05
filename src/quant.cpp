@@ -32,7 +32,6 @@ void Quant::sync() {
 }
 
 std::vector<std::vector<double>> Quant::generate_environment(std::string &ticker) {
-    std::cout << "Downloading...\n\n";
     std::string cmd = "./python/download.py " + ticker;
     for(std::string &indicator: indicators)
         cmd += indicator + " ";
@@ -42,7 +41,6 @@ std::vector<std::vector<double>> Quant::generate_environment(std::string &ticker
     std::vector<std::vector<double>> raw = read_csv(merge);
     std::vector<std::vector<double>> env(raw.size()+1, std::vector<double>());
 
-    std::cout << "Computing valuation series...\n";
     std::vector<std::thread> threads;
     for(int i = 0; i < raw.size(); i++) {
         std::thread th(vscore, raw[i], &env[i+1], *seed);

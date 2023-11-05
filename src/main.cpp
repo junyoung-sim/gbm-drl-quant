@@ -18,8 +18,8 @@ void boot(int argc, char *argv[]) {
         tickers.push_back(argv[i]);
     checkpoint = argv[argc-1];
 
-    std::string cmd = "rm ./data/* ./res/*";
-    fix_dsp(cmd); std::system(cmd.c_str());
+    //std::string cmd = "rm ./data/* ./res/*";
+    //fix_dsp(cmd); std::system(cmd.c_str());
 
     std::cout << std::fixed;
     std::cout.precision(15);
