@@ -9,7 +9,7 @@
 #include <chrono>
 #include <map>
 
-#include "../lib/data.hpp"
+#include "../lib/gbm.hpp"
 #include "../lib/net.hpp"
 
 #define TICKER 0
@@ -19,48 +19,42 @@ struct Memory {
     unsigned int action;
     double optimal;
 
-    Memory(std::vector<double> &s, unsigned int a, double opt) {
-        state.swap(s);
-        action = a;
-        optimal = opt;
-    }
+    Memory(std::vector<double> &s, unsigned int a, double opt): action(a), optimal(opt) { state.swap(s); }
 };
-
-typedef std::map<std::string, std::vector<std::vector<double>>> Environment;
 
 class Quant
 {
 private:
-    // Deep Q-Network (DQN)
-    NeuralNetwork agent;
-    NeuralNetwork target;
+    std::vector<std::string> tickers;
+    std::vector<std::string> indicators;
 
-    const std::vector<double> action_space = {-1.0, 0.0, 1.0}; // short, idle, long
-
-    const unsigned int obs = 100; // observation period
-
+    Net agent;
+    Net target;
     std::string checkpoint;
-    std::default_random_engine seed;
+    std::default_random_engine *seed;
+
+    std::vector<double> action_space = {-1.0, 0.0, 1.0}; // short, idle, long
 
 public:
     Quant() {}
-    Quant(std::string path): checkpoint(path) {
-        init({{500,500},{500,500},{500,500},{500,500},{500,500},{500,3}});
-        load();
+    Quant(std::vector<std::string> &t, std::vector<std::string> &i, std::default_random_engine &s, std::string path) {
+        seed = &s; tickers.swap(t); indicators.swap(i);
+        init({{500,500},{500,500},{500,500},{500,500},{500,500},{500,3}}); load();
     }
 
     void init(std::vector<std::vector<unsigned int>> shape);
     void sync();
 
+    std::vector<std::vector<double>> generate_environment(std::string &ticker);
     std::vector<double> sample_state(std::vector<std::vector<double>> &env, unsigned int t);
 
     unsigned int greedy(std::vector<double> &state);
     unsigned int epsilon_greedy(std::vector<double> &state, double eps);
 
-    void build(std::vector<std::string> &tickers, Environment &env);
+    void build();
     void sgd(Memory &memory, double alpha, double lambda);
 
-    void test(std::vector<std::string> &tickers, Environment &env);
+    void test();
 
     void save();
     void load();

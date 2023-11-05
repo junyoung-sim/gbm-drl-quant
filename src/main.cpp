@@ -1,28 +1,16 @@
-#include <iostream>
 #include <cstdlib>
 #include <string>
 #include <vector>
 
 #include "../lib/quant.hpp"
 
-/*
-<STATE>                              
-    X: Ticker-of-interest
-    SPY: S&P 500
-    IEF: US Treasury 7-10Y
-    GSG: Commodities
-    EUR=X: Europe/USD
-
-    ./exec MODE (TRAIN) (TEST) <TICKERS> ./models/CHECKPOINT
-*/
-
 std::vector<std::string> tickers;
 std::vector<std::string> indicators = {"SPY", "IEF", "GSG", "EUR=X"};
+std::vector<std::vector<double>> env;
 
 std::string mode;
 std::string checkpoint;
-
-Environment env; // (ticker, dataset)
+std::default_random_engine seed(std::chrono::system_clock::now().time_since_epoch().count());
 
 void boot(int argc, char *argv[]) {
     mode = argv[1];
@@ -30,20 +18,9 @@ void boot(int argc, char *argv[]) {
         tickers.push_back(argv[i]);
     checkpoint = argv[argc-1];
 
-    std::system("rm ./res/log ./res/stats ./res/*.png");
+    std::string cmd = "rm ./data/* ./res/*";
+    fix_dsp(cmd); std::system(cmd.c_str());
 
-    std::cout << "\nDownloading... (this may take a while)\n\n";
-    for(std::string &ind: indicators) {
-        download(ind);
-        std::system(("./python/gbm.py " + ind).c_str()); // GBM simulation
-    }
-    for(std::string &ticker: tickers) {
-        download(ticker);
-        std::system(("./python/gbm.py " + ticker).c_str()); // GBM simulation
-        env[ticker] = historical_data(ticker, indicators);
-    }
-
-    std::cout << "\n";
     std::cout << std::fixed;
     std::cout.precision(15);
 }
@@ -52,13 +29,10 @@ int main(int argc, char *argv[])
 {
     boot(argc, argv);
 
-    Quant quant(checkpoint);
+    Quant quant(tickers, indicators, seed, checkpoint);
 
-    if(mode == "build")
-        quant.build(tickers, env);
-    
-    if(mode == "test")
-        quant.test(tickers, env);
+    if(mode == "build") quant.build();
+    if(mode == "test") quant.test();
 
     return 0;
 }
