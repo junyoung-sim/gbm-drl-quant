@@ -5,8 +5,7 @@
 #include "../lib/quant.hpp"
 
 std::vector<std::string> tickers;
-std::vector<std::string> indicators = {"SPY", "IEF", "GSG", "EUR=X"};
-std::vector<std::vector<double>> env;
+std::vector<std::string> indicators = {"SPY", "IEF", "EUR=X", "CL=F"};
 
 std::string mode;
 std::string checkpoint;
@@ -18,8 +17,8 @@ void boot(int argc, char *argv[]) {
         tickers.push_back(argv[i]);
     checkpoint = argv[argc-1];
 
-    //std::string cmd = "rm ./data/* ./res/*";
-    //fix_dsp(cmd); std::system(cmd.c_str());
+    std::string cmd = "rm ./data/* ./res/*";
+    fix_dsp(cmd); std::system(cmd.c_str());
 
     std::cout << std::fixed;
     std::cout.precision(15);
@@ -33,6 +32,7 @@ int main(int argc, char *argv[])
 
     if(mode == "build") quant.build();
     if(mode == "test") quant.test();
+    if(mode == "run") quant.run();
 
     return 0;
 }

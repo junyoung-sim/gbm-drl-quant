@@ -32,7 +32,7 @@ void Quant::sync() {
 }
 
 std::vector<std::vector<double>> Quant::generate_environment(std::string &ticker) {
-    std::string cmd = "./python/download.py " + ticker;
+    std::string cmd = "./python/download.py " + ticker + " ";
     for(std::string &indicator: indicators)
         cmd += indicator + " ";
     fix_dsp(cmd); std::system(cmd.c_str());
@@ -48,14 +48,14 @@ std::vector<std::vector<double>> Quant::generate_environment(std::string &ticker
     }
     for(int i = 0; i < raw.size(); i++) threads[i].join();
 
-    env[TICKER] = {raw[TICKER].begin() + OBS - 1, raw[TICKER].end()};
+    env[TICKER] = {raw[TICKER].begin() + OBS-1, raw[TICKER].end()};
     return env;
 }
 
 std::vector<double> Quant::sample_state(std::vector<std::vector<double>> &env, unsigned int t) {
     std::vector<double> state;
     for(unsigned int i = 1; i < env.size(); i++) {
-        std::vector<double> dat = {env[i].begin() + t + 1 - OBS, env[i].begin() + t + 1};
+        std::vector<double> dat = {env[i].begin() + t + 1 - LOOK_BACK, env[i].begin() + t + 1};
         state.insert(state.end(), dat.begin(), dat.end());
     }
     return state;
@@ -67,39 +67,48 @@ unsigned int Quant::greedy(std::vector<double> &state) {
 }
 
 unsigned int Quant::epsilon_greedy(std::vector<double> &state, double eps) {
-    unsigned int action = greedy(state);
+    unsigned int greedy_action = greedy(state);
     double explore = (double)rand() / RAND_MAX;
     if(explore < eps) {
-        action = rand() % action_space.size();
         std::cout << "(E) ";
+        return rand() % action_space.size();
     }
-    else
-        std::cout << "(P) ";
-    return action;
+    std::cout << "(P) ";
+    return greedy_action;
 }
 
 void Quant::build() {
-    const double EPS = 0.25;
+    const double EPS_INIT = 1.00;
+    const double EPS_MIN = 0.10;
     const double GAMMA = 0.80;
-    const double ALPHA = 0.00000001;
+    const double ALPHA = 0.000001;
     const double LAMBDA = 0.10;
-    const unsigned int CAPACITY = 1000;
-    const unsigned int BATCH_SIZE = 10;
-    
+
     std::vector<Memory> replay;
+    const unsigned int CAPACITY = 25000;
+    const unsigned int BATCH_SIZE = 10;
+
+    double EPS = EPS_INIT;
+    double RSS = 0.00, MSE = 0.00;
     unsigned int experiences = 0;
 
     std::shuffle(tickers.begin(), tickers.end(), *seed);
     for(std::string &ticker: tickers) {
         std::ofstream out("./res/log");
-        out << "X,SPY,IEF,GSG,EUR=X,action,benchmark,model\n";
+        out << "X,";
+        for(std::string &indicator: indicators)
+            out << indicator << ",";
+        out << "action,benchmark,model\n";
         double benchmark = 1.00, model = 1.00;
 
         std::vector<std::vector<double>> env = generate_environment(ticker);
-        const unsigned int START = OBS - 1, END = env[TICKER].size() - 2;
+        const unsigned int START = LOOK_BACK - 1, END = env[TICKER].size() - 2;
         for(unsigned int t = START; t <= END; t++) {
+            if(experiences <= CAPACITY)
+                EPS = (EPS_MIN - EPS_INIT) * experiences / CAPACITY + EPS_INIT;
             std::vector<double> state = sample_state(env, t);
             unsigned int action = epsilon_greedy(state, EPS);
+            double q = agent.back()->node(action)->sum();
             
             std::vector<double> next_state = sample_state(env, t+1);
             std::vector<double> next_q = target.predict(next_state);
@@ -108,18 +117,21 @@ void Quant::build() {
             double observed_reward = (diff >= 0.00 ? action_space[action] : -action_space[action]);
             double optimal = observed_reward + GAMMA * *std::max_element(next_q.begin(), next_q.end());
 
-            Memory memory(state, action, optimal);
-            replay.push_back(memory);
-
             benchmark *= 1.00 + diff;
             model *= 1.00 + diff * action_space[action];
-
-            for(unsigned int i = 1; i < env[TICKER].size(); i++)
-                out << state[OBS*i-1] << ",";
+            for(unsigned int i = 1; i < env.size(); i++)
+                out << state[LOOK_BACK*i-1] << ",";
             out << action << "," << benchmark << "," << model << "\n";
+
+            RSS += pow(optimal - q, 2);
+            MSE = RSS / ++experiences;
+
+            std::cout << "LOSS=" << MSE << " EPS=" << EPS << " ALPHA=" << ALPHA << " "; 
             std::cout << "T=" << t << " @ " << ticker << " ACTION=" << action << " ";
             std::cout << "-> OBS=" << observed_reward << " OPT=" << optimal << " ";
             std::cout << "BENCH=" << benchmark << " " << "MODEL=" << model << "\n";
+
+            replay.push_back(Memory(state, action, optimal));
 
             if(replay.size() == CAPACITY) {
                 std::vector<unsigned int> index(CAPACITY, 0);
@@ -127,7 +139,7 @@ void Quant::build() {
                 std::shuffle(index.begin(), index.end(), *seed);
                 index.erase(index.begin() + BATCH_SIZE, index.end());
 
-                for(unsigned int k: index)
+                for(unsigned int &k: index)
                     sgd(replay[k], ALPHA, LAMBDA);
                 
                 replay.erase(replay.begin());
@@ -174,29 +186,27 @@ void Quant::sgd(Memory &memory, double alpha, double LAMBDA) {
 }
 
 void Quant::test() {
-    std::vector<int> action_count = {0, 0, 0};
     for(std::string &ticker: tickers) {
         std::ofstream out("./res/log");
-        out << "X,SPY,IEF,GSG,EUR=X,action,benchmark,model\n";
+        out << "X,";
+        for(std::string &indicator: indicators)
+            out << indicator << ",";
+        out << "action,benchmark,model\n";
         double benchmark = 1.00, model = 1.00;
 
         std::vector<std::vector<double>> env = generate_environment(ticker);
-        unsigned int START = OBS - 1, END = env[TICKER].size() - 1;
+        const unsigned int START = LOOK_BACK - 1, END = env[TICKER].size() - 2;
         for(unsigned int t = START; t <= END; t++) {
             std::vector<double> state = sample_state(env, t);
             unsigned int action = greedy(state);
 
-            if(t == END) { action_count[action]++; continue; }
-
             double diff = (env[TICKER][t+1] - env[TICKER][t]) / env[TICKER][t];
             benchmark *= 1.00 + diff;
             model *= 1.00 + diff * action_space[action];
-
-            for(unsigned int i = 1; i < env[TICKER].size(); i++)
-                out << state[OBS*i-1] << ",";
+            
+            for(unsigned int i = 1; i < env.size(); i++)
+                out << state[LOOK_BACK*i-1] << ",";
             out << action << "," << benchmark << "," << model << "\n";
-            std::cout << "T=" << t << " @ " << ticker << " ACTION=" << action << " ";
-            std::cout << "DIFF=" << diff << " BENCH=" << benchmark << " MODEL=" << model << "\n";
         }
 
         out.close();
@@ -206,11 +216,14 @@ void Quant::test() {
     }
 
     std::system("./python/stats.py summary");
+}
 
-    std::cout << "\n";
-    std::cout << "ACTION (0) - SHORT: " << action_count[0] << "\n";
-    std::cout << "ACTION (1) - IDLE : " << action_count[1] << "\n";
-    std::cout << "ACTION (2) - LONG : " << action_count[2] << "\n";
+void Quant::run() {
+    for(std::string &ticker: tickers) {
+        std::vector<std::vector<double>> env = generate_environment(ticker);
+        std::vector<double> state = sample_state(env, env[TICKER].size() - 1);
+        std::cout << ticker << ": " << greedy(state) << "\n";
+    }
 }
 
 void Quant::save() {

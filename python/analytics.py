@@ -35,7 +35,6 @@ for col in log.columns[:-3]:
     ax.plot(valuation, amap[0], label="Short", color="steelblue")
     ax.plot(valuation, amap[1], label="Idle", color="lightskyblue")
     ax.plot(valuation, amap[2], label="Long", color="cadetblue")    
-    ax.vlines(log[col].iloc[-1], 0, 1, color="red")
 
     plt.ylabel("Probability")
     plt.xlabel("{} Valuation Score" .format(col))

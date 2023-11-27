@@ -12,6 +12,8 @@
 #include "../lib/gbm.hpp"
 #include "../lib/net.hpp"
 
+#define LOOK_BACK 100
+
 #define TICKER 0
 
 struct Memory {
@@ -38,7 +40,7 @@ private:
 public:
     Quant() {}
     Quant(std::vector<std::string> &t, std::vector<std::string> &i, std::default_random_engine &s, std::string path) {
-        seed = &s; tickers.swap(t); indicators.swap(i);
+        tickers.swap(t); indicators.swap(i); seed = &s; checkpoint = path;
         init({{500,500},{500,500},{500,500},{500,500},{500,500},{500,3}}); load();
     }
 
@@ -55,6 +57,7 @@ public:
     void sgd(Memory &memory, double alpha, double lambda);
 
     void test();
+    void run();
 
     void save();
     void load();

@@ -7,7 +7,7 @@
 
 #include "../lib/data.hpp"
 
-#define OBS 100
+#define OBS 60
 #define EXT 20
 #define EPOCH 1000
 

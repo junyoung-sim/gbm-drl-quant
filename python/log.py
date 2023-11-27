@@ -9,30 +9,16 @@ log = pd.read_csv("./res/log")
 
 plt.figure(figsize=(30,20))
 
-plt.subplot(4, 2, 1)
-plt.title("State: X")
-plt.plot(log["X"], label="X", color="cadetblue")
-plt.legend()
+plot_index = [1, 2, 4, 6, 8]
+colors = ["cadetblue", "steelblue", "dodgerblue", "lightskyblue", "cornflowerblue"]
 
-plt.subplot(4, 2, 2)
-plt.title("State: SPY")
-plt.plot(log["SPY"], label="SPY", color="steelblue")
-plt.legend()
-
-plt.subplot(4, 2, 4)
-plt.title("State: IEF")
-plt.plot(log["IEF"], label="IEF", color="dodgerblue")
-plt.legend()
-
-plt.subplot(4, 2, 6)
-plt.title("State: GSG")
-plt.plot(log["GSG"], label="GSG", color="lightskyblue")
-plt.legend()
-
-plt.subplot(4, 2, 8)
-plt.title("State: EUR=X")
-plt.plot(log["EUR=X"], label="EUR=X", color="cornflowerblue")
-plt.legend()
+k = 0
+for key in log.columns[:5]:
+    plt.subplot(4, 2, plot_index[k])
+    plt.title(f"State: {key}")
+    plt.plot(log[key], label=key, color=colors[k])
+    plt.legend()
+    k += 1
 
 #####
 
