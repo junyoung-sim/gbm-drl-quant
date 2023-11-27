@@ -34,17 +34,11 @@ This trading model combines the aforementioned GBM simulation with Generalized D
 
 The trading model was trained on the top 50 holdings of the S&P 500.
 
-DIA: Dow Jones Industrial Average (simulated price movements)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/DIA-sim.png)
-
 DIA: Dow Jones Industrial Average (up-to-date test performance)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/DIA-test.png)
 
 DIA: Dow Jones Industrial Average (probability of each action given truncated valuation scores)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/DIA-analytics.png)
-
-QQQ: NASDAQ Composite Index (simulated price movements)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/QQQ-sim.png)
 
 QQQ: NASDAQ Composite Index (up-to-date test performance)
 ![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/QQQ-test.png)
