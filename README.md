@@ -32,28 +32,28 @@ This trading model combines the aforementioned GBM simulation with Generalized D
 
 ## Performance
 
-The trading model was trained on the top 50 holdings of the S&P 500.
+The trading model was trained on the S&P 500 top 50 holdings.
 
-DIA: Dow Jones Industrial Average (up-to-date test performance)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/DIA-test.png)
+JPM (performance)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/JPM-test.png)
 
-DIA: Dow Jones Industrial Average (probability of each action given truncated valuation scores)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/DIA-analytics.png)
+JPM (model behavior)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/JPM-analytics.png)
 
-QQQ: NASDAQ Composite Index (up-to-date test performance)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/QQQ-test.png)
+BLK (performance)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/BLK-test.png)
 
-QQQ: NASDAQ Composite Index (probability of each action given truncated valuation scores)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/QQQ-analytics.png)
+BLK (model behavior)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/BLK-analytics.png)
 
-Benchmark: DIA + QQQ (equal weight)
+Benchmark: S&P 500 Top 100 (Equal-Weight)
 
 | Metric | Benchmark | Model  |
 |--------|-----------|--------|
-| E(R)   | 0.1137    | 0.4109 |
-| SD(R)  | 0.1301    | 0.2839 |
-| SR     | 0.8737    | 1.4476 |
-| MDD    | 0.5264    | 0.2922 |
+| E(R)   | 0.1449    | 0.3408 |
+| SD(R)  | 0.2773    | 0.5133 |
+| SR     | 0.5227    | 0.6640 |
+| MDD    | 0.5974    | 0.4278 |
 
 E(R) = annualized return, SD(R) = return standard deviation, SR = sharpe ratio, MDD = maximum drawdown
 
