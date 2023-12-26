@@ -43,7 +43,7 @@ std::vector<std::vector<double>> Quant::generate_environment(std::string &ticker
 
     std::vector<std::thread> threads;
     for(int i = 0; i < raw.size(); i++) {
-        std::thread th(vscore, raw[i], &env[i+1], *seed);
+        std::thread th(vscore, std::ref(raw[i]), std::ref(env[i+1]), std::ref(*seed));
         threads.push_back(std::move(th));
     }
     for(int i = 0; i < raw.size(); i++) threads[i].join();

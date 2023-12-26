@@ -13,6 +13,6 @@
 
 std::vector<double> returns(std::vector<double> &raw);
 
-void vscore(std::vector<double> raw, std::vector<double> *v, std::default_random_engine seed);
+void vscore(std::vector<double> &raw, std::vector<double> &v, std::default_random_engine &seed);
 
 #endif

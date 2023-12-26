@@ -11,7 +11,7 @@ std::vector<double> returns(std::vector<double> &raw) {
     return r;
 }
 
-void vscore(std::vector<double> raw, std::vector<double> *v, std::default_random_engine seed) {
+void vscore(std::vector<double> &raw, std::vector<double> &v, std::default_random_engine &seed) {
     for(int t = OBS-1; t < raw.size(); t++) {
         std::vector<double> temp = {raw.begin() + t+1-OBS, raw.begin() + t+1};
         std::vector<double> ret = returns(temp);
@@ -32,8 +32,8 @@ void vscore(std::vector<double> raw, std::vector<double> *v, std::default_random
                 sum += (path[i][j] > s0);
             }
         }
-        v->push_back((double)sum / (EPOCH * EXT));
+        v.push_back((double)sum / (EPOCH * EXT));
     }
 
-    standardize(*v);
+    standardize(v);
 }
