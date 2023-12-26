@@ -34,24 +34,24 @@ The baseline model was trained on the S&P 500 top 50 holdings. The model is regu
 
 | Metric | Benchmark | Model  |
 |--------|-----------|--------|
-| E(R)   | 0.1449    | 0.3408 |
-| SD(R)  | 0.2773    | 0.5133 |
-| SR     | 0.5227    | 0.6640 |
-| MDD    | 0.5974    | 0.4278 |
+| E(R)   | 0.1453    | 0.3730 |
+| SD(R)  | 0.2773    | 0.5063 |
+| SR     | 0.5238    | 0.7369 |
+| MDD    | 0.5974    | 0.4554 |
 
 E(R) = annualized return, SD(R) = return standard deviation, SR = sharpe ratio, MDD = maximum drawdown
 
 JPM (performance)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/v1/JPM-test.png)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/v2/JPM-test.png)
 
 JPM (model behavior)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/v1/JPM-analytics.png)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/v2/JPM-analytics.png)
 
 BLK (performance)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/v1/BLK-test.png)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/v2/BLK-test.png)
 
 BLK (model behavior)
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/v1/BLK-analytics.png)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/res/test/v2/BLK-analytics.png)
 
 ## Usage
 
