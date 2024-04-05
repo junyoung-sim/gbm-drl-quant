@@ -1,4 +1,4 @@
-# Geometric Brownian Motion and Generalized Deep Reinforcement Learning for Low-Frequency Trading
+# Low-Frequency Momentum Trading via Geometric Brownian Motion and Generalized Deep Reinforcement Learning
 
 ## Geometric Brownian Motion for Estimating Valuation Cycles
 
