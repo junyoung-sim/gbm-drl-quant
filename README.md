@@ -16,7 +16,7 @@ Using the simulation shown above, we can estimate the probability that the value
 
 Repeat the same procedure for every ***t*** and simulation yields the following output.
 
-![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/etc/valuation_cycle_example.png)
+![alt text](https://github.com/junyoung-sim/gbm-drl-quant/blob/main/etc/vscore.png)
 
 The graph above shows the valuation series of the S&P 500. Notice that the critical values and zero-crossings in the valuation series coincide with the extremas and major turning points in the stock index's price movement.
 
